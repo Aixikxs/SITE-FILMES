@@ -121,7 +121,7 @@
     </div>
 
     <main>
-        <h2 class="section-title" id="sectionTitle">Escolha o Catálogo de Filmes</h2>
+        <h2 class="section-title" id="sectionTitle">Player Direto de Filmes</h2>
         <div class="content-grid" id="gridContainer"></div>
     </main>
 
@@ -132,21 +132,17 @@
     <script>
         const dadosSite = {
             'filmes': [
-                { titulo: "Lista Geral de Filmes", desc: "Acesse todos os filmes disponíveis ordenados no servidor oficial.", url: "https://superflixapi.pro/lista?category=filme", icone: "fa-film" },
-                { titulo: "Filmes por Gênero", desc: "Navegue pelas categorias de ação, terror, comédia e mais.", url: "https://superflixapi.pro/lista?category=filme&type=generos", icone: "fa-shapes" },
-                { titulo: "Busca de Filmes (TMDB/IMDB)", desc: "Encontre produções específicas de forma direta.", url: "https://superflixapi.pro/lista?category=pesquisa&q=filme", icone: "fa-magnifying-glass" }
+                { titulo: "Player de Filme em Destaque 1", desc: "Abre diretamente o player oficial de reprodução.", url: "https://superflixapi.pro/filme/tt0068646", icone: "fa-film" },
+                { titulo: "Player de Filme em Destaque 2", desc: "Abre o segundo player de transmissão direta.", url: "https://superflixapi.pro/filme/tt0111161", icone: "fa-video" }
             ],
             'series': [
-                { titulo: "Lista Geral de Séries", desc: "Explore todas as séries e temporadas atualizadas.", url: "https://superflixapi.pro/lista?category=serie", icone: "fa-tv" },
-                { titulo: "Catálogo de Animes", desc: "Os melhores animes com player integrado e episódios.", url: "https://superflixapi.pro/lista?category=anime", icone: "fa-dragon" },
-                { titulo: "Doramas", desc: "Acesse a lista completa de doramas asiáticos.", url: "https://superflixapi.pro/lista?category=dorama", icone: "fa-masks-theater" }
+                { titulo: "Player de Série / Episódio", desc: "Abre o player unificado de séries e temporadas.", url: "https://superflixapi.pro/serie/1396/1/1", icone: "fa-tv" }
             ],
             'canais': [
-                { titulo: "Canais de TV ao Vivo", desc: "Grade completa de canais abertos e fechados.", url: "https://superflixapi.pro/lista?category=canais", icone: "fa-tower-broadcast" },
-                { titulo: "Guia de Programação (XMLTV)", desc: "Confira o que está passando na grade atual.", url: "https://superflixapi.pro/lista?category=guia", icone: "fa-calendar-days" }
+                { titulo: "Canais ao Vivo (Acesso Direto)", desc: "Acessa a interface de transmissão ao vivo.", url: "https://superflixapi.pro/canal/1", icone: "fa-tower-broadcast" }
             ],
             'esportes': [
-                { titulo: "Eventos Esportivos Ao Vivo", desc: "Futebol, campeonatos e partidas em tempo real com múltiplos players.", url: "https://superflixapi.pro/lista?category=eventos", icone: "fa-futbol" }
+                { titulo: "Eventos Esportivos", desc: "Acessa a agenda de partidas e eventos ao vivo.", url: "https://superflixapi.pro/lista?category=eventos", icone: "fa-futbol" }
             ]
         };
 
@@ -156,10 +152,10 @@
 
             const grid = document.getElementById('gridContainer');
             const titulosSecao = {
-                'filmes': 'Opções de Catálogo de Filmes',
-                'series': 'Opções de Séries, Animes e Doramas',
-                'canais': 'Opções de Canais de TV',
-                'esportes': 'Opções de Esportes e Eventos'
+                'filmes': 'Player Direto de Filmes',
+                'series': 'Player Direto de Séries',
+                'canais': 'Player de Canais de TV',
+                'esportes': 'Transmissões e Esportes'
             };
             
             document.getElementById('sectionTitle').innerText = titulosSecao[secao];
@@ -176,7 +172,7 @@
                     <div class="card-body">
                         <div class="card-title">${item.titulo}</div>
                         <div class="card-desc">${item.desc}</div>
-                        <div class="action-badge"><i class="fa-solid fa-play"></i> Abrir Player / Servidor</div>
+                        <div class="action-badge"><i class="fa-solid fa-play"></i> Assistir Agora</div>
                     </div>
                 `;
                 grid.appendChild(card);
