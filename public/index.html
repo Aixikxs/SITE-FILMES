@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CineFlix - Filmes, Séries, Animes e Canais</title>
+    <title>CineFlix - Filmes, Séries e Canais</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -36,7 +36,7 @@
             position: sticky;
             top: 0;
             z-index: 100;
-            background: rgba(10, 10, 12, 0.85);
+            background: rgba(10, 10, 12, 0.9);
             backdrop-filter: blur(16px);
             border-bottom: 1px solid var(--border-color);
             padding: 16px 24px;
@@ -75,24 +75,29 @@
         .section-title { font-size: 20px; font-weight: 700; margin-bottom: 24px; display: flex; align-items: center; gap: 10px; }
         .section-title::before { content: ''; width: 4px; height: 20px; background: var(--accent-red); border-radius: 4px; }
 
-        .movies-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 20px; }
+        .content-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 20px; }
 
-        .card {
+        .player-card {
             background: var(--bg-card); border-radius: 14px; overflow: hidden;
-            cursor: pointer; border: 1px solid var(--border-color);
-            display: flex; flex-direction: column; text-decoration: none; transition: 0.3s;
+            border: 1px solid var(--border-color); display: flex; flex-direction: column;
+            text-decoration: none; transition: 0.3s;
         }
-        .card:hover { transform: translateY(-6px); border-color: rgba(255,255,255,0.3); }
+        .player-card:hover { transform: translateY(-6px); border-color: rgba(229, 9, 20, 0.5); box-shadow: 0 10px 25px rgba(229, 9, 20, 0.2); }
 
-        .card-banner {
-            width: 100%; aspect-ratio: 16/9; background: var(--bg-secondary);
-            display: flex; align-items: center; justify-content: center;
-            font-size: 32px; color: var(--accent-red);
+        .card-header-icon {
+            background: var(--bg-secondary); padding: 24px; text-align: center;
+            font-size: 36px; color: var(--accent-red); border-bottom: 1px solid var(--border-color);
         }
 
-        .card-info { padding: 16px; }
-        .card-title { font-size: 15px; font-weight: 600; color: #fff; margin-bottom: 6px; }
-        .card-desc { font-size: 12px; color: var(--text-muted); }
+        .card-body { padding: 18px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
+        .card-title { font-size: 16px; font-weight: 700; color: #fff; }
+        .card-desc { font-size: 13px; color: var(--text-muted); line-height: 1.4; }
+        
+        .action-badge {
+            margin-top: 12px; background: rgba(229, 9, 20, 0.15); color: var(--accent-red);
+            font-size: 12px; font-weight: 700; padding: 8px 12px; border-radius: 8px;
+            text-align: center; display: flex; align-items: center; justify-content: center; gap: 6px;
+        }
 
         footer { border-top: 1px solid var(--border-color); padding: 24px; text-align: center; color: var(--text-muted); font-size: 13px; }
     </style>
@@ -100,7 +105,7 @@
 <body>
 
     <header>
-        <div class="logo-container" onclick="mudarAba('filmes')">
+        <div class="logo-container" onclick="mudarSecao('filmes')">
             <div class="logo-icon"><i class="fa-solid fa-play"></i></div>
             <div class="logo-text">Cine<span>Flix</span></div>
         </div>
@@ -108,74 +113,77 @@
 
     <div class="nav-tabs-wrapper">
         <div class="nav-tabs">
-            <button class="tab-btn active" id="btn-filmes" onclick="mudarAba('filmes')"><i class="fa-solid fa-film"></i> Catálogo de Filmes</button>
-            <button class="tab-btn" id="btn-series" onclick="mudarAba('series')"><i class="fa-solid fa-tv"></i> Catálogo de Séries</button>
-            <button class="tab-btn" id="btn-animes" onclick="mudarAba('animes')"><i class="fa-solid fa-dragon"></i> Catálogo de Animes</button>
-            <button class="tab-btn" id="btn-canais" onclick="mudarAba('canais')"><i class="fa-solid fa-tower-broadcast"></i> Canais ao Vivo</button>
-            <button class="tab-btn" id="btn-eventos" onclick="mudarAba('eventos')"><i class="fa-solid fa-futbol"></i> Eventos Esportivos</button>
+            <button class="tab-btn active" id="btn-filmes" onclick="mudarSecao('filmes')"><i class="fa-solid fa-film"></i> Filmes</button>
+            <button class="tab-btn" id="btn-series" onclick="mudarSecao('series')"><i class="fa-solid fa-tv"></i> Séries & Animes</button>
+            <button class="tab-btn" id="btn-canais" onclick="mudarSecao('canais')"><i class="fa-solid fa-tower-broadcast"></i> Canais ao Vivo</button>
+            <button class="tab-btn" id="btn-esportes" onclick="mudarSecao('esportes')"><i class="fa-solid fa-futbol"></i> Esportes / Eventos</button>
         </div>
     </div>
 
     <main>
-        <h2 class="section-title" id="sectionTitle">Acesso Direto aos Catálogos</h2>
-        <div class="movies-grid" id="moviesGrid">
-            <!-- Os itens serão gerados aqui -->
-        </div>
+        <h2 class="section-title" id="sectionTitle">Escolha o Catálogo de Filmes</h2>
+        <div class="content-grid" id="gridContainer"></div>
     </main>
 
     <footer>
-        <p>&copy; CineFlix - Todos os direitos reservados.</p>
+        <p>&copy; CineFlix - Plataforma de Streaming Integrada</p>
     </footer>
 
     <script>
-        const conteudos = {
+        const dadosSite = {
             'filmes': [
-                { titulo: "Abrir Lista Completa de Filmes", desc: "Acessar servidor oficial", url: "https://superflixapi.pro/lista?category=filme", icone: "fa-film" },
-                { titulo: "Filmes de Ação", desc: "Ver por gênero", url: "https://superflixapi.pro/lista?category=filme&type=generos", icone: "fa-fire" }
+                { titulo: "Lista Geral de Filmes", desc: "Acesse todos os filmes disponíveis ordenados no servidor oficial.", url: "https://superflixapi.pro/lista?category=filme", icone: "fa-film" },
+                { titulo: "Filmes por Gênero", desc: "Navegue pelas categorias de ação, terror, comédia e mais.", url: "https://superflixapi.pro/lista?category=filme&type=generos", icone: "fa-shapes" },
+                { titulo: "Busca de Filmes (TMDB/IMDB)", desc: "Encontre produções específicas de forma direta.", url: "https://superflixapi.pro/lista?category=pesquisa&q=filme", icone: "fa-magnifying-glass" }
             ],
             'series': [
-                { titulo: "Abrir Lista Completa de Séries", desc: "Acessar servidor oficial", url: "https://superflixapi.pro/lista?category=serie", icone: "fa-tv" },
-                { titulo: "Séries de Drama", desc: "Ver por gênero", url: "https://superflixapi.pro/lista?category=serie&type=generos", icone: "fa-masks-theater" }
-            ],
-            'animes': [
-                { titulo: "Abrir Lista Completa de Animes", desc: "Acessar servidor oficial", url: "https://superflixapi.pro/lista?category=anime", icone: "fa-dragon" },
-                { titulo: "Animes Shounen", desc: "Ver por gênero", url: "https://superflixapi.pro/lista?category=anime&type=generos", icone: "fa-bolt" }
+                { titulo: "Lista Geral de Séries", desc: "Explore todas as séries e temporadas atualizadas.", url: "https://superflixapi.pro/lista?category=serie", icone: "fa-tv" },
+                { titulo: "Catálogo de Animes", desc: "Os melhores animes com player integrado e episódios.", url: "https://superflixapi.pro/lista?category=anime", icone: "fa-dragon" },
+                { titulo: "Doramas", desc: "Acesse a lista completa de doramas asiáticos.", url: "https://superflixapi.pro/lista?category=dorama", icone: "fa-masks-theater" }
             ],
             'canais': [
-                { titulo: "Canais ao Vivo (Geral)", desc: "Lista pública de canais", url: "https://superflixapi.pro/lista?category=canais", icone: "fa-tower-broadcast" },
-                { titulo: "Guia de Programação (XMLTV)", desc: "Grade de horários", url: "https://superflixapi.pro/lista?category=guia", icone: "fa-calendar-days" }
+                { titulo: "Canais de TV ao Vivo", desc: "Grade completa de canais abertos e fechados.", url: "https://superflixapi.pro/lista?category=canais", icone: "fa-tower-broadcast" },
+                { titulo: "Guia de Programação (XMLTV)", desc: "Confira o que está passando na grade atual.", url: "https://superflixapi.pro/lista?category=guia", icone: "fa-calendar-days" }
             ],
-            'eventos': [
-                { titulo: "Agenda de Eventos Esportivos", desc: "Futebol e Esportes Ao Vivo", url: "https://superflixapi.pro/lista?category=eventos", icone: "fa-futbol" }
+            'esportes': [
+                { titulo: "Eventos Esportivos Ao Vivo", desc: "Futebol, campeonatos e partidas em tempo real com múltiplos players.", url: "https://superflixapi.pro/lista?category=eventos", icone: "fa-futbol" }
             ]
         };
 
-        function mudarAba(cat) {
+        function mudarSecao(secao) {
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-            document.getElementById(`btn-${cat}`).classList.add('active');
+            document.getElementById(`btn-${secao}`).classList.add('active');
+
+            const grid = document.getElementById('gridContainer');
+            const titulosSecao = {
+                'filmes': 'Opções de Catálogo de Filmes',
+                'series': 'Opções de Séries, Animes e Doramas',
+                'canais': 'Opções de Canais de TV',
+                'esportes': 'Opções de Esportes e Eventos'
+            };
             
-            const grid = document.getElementById('moviesGrid');
-            document.getElementById('sectionTitleinnerText'] = `Acesso Direto - ${cat.toUpperCase()}`;
+            document.getElementById('sectionTitle').innerText = titulosSecao[secao];
             grid.innerHTML = '';
 
-            const lista = conteudos[cat] || [];
+            const lista = dadosSite[secao] || [];
             lista.forEach(item => {
-                const a = document.createElement('a');
-                a.className = 'card';
-                a.href = item.url;
-                a.target = '_blank';
-                a.innerHTML = `
-                    <div class="card-banner"><i class="fa-solid ${item.icone}"></i></div>
-                    <div class="card-info">
+                const card = document.createElement('a');
+                card.className = 'player-card';
+                card.href = item.url;
+                card.target = '_blank';
+                card.innerHTML = `
+                    <div class="card-header-icon"><i class="fa-solid ${item.icone}"></i></div>
+                    <div class="card-body">
                         <div class="card-title">${item.titulo}</div>
                         <div class="card-desc">${item.desc}</div>
+                        <div class="action-badge"><i class="fa-solid fa-play"></i> Abrir Player / Servidor</div>
                     </div>
                 `;
-                grid.appendChild(a);
+                grid.appendChild(card);
             });
         }
 
-        mudarAba('filmes');
+        mudarSecao('filmes');
     </script>
 </body>
 </html>
