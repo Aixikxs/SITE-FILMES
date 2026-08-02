@@ -1,13 +1,7 @@
 {
-  "$schema": "node_modules/wrangler/config-schema.json",
   "name": "site-filmes",
-  "main": "src/index.js", // <-- Adicione o caminho do arquivo do seu backend/Worker aqui!
   "compatibility_date": "2026-08-02",
   "assets": {
-    "directory": "./public", // <-- Mova seu HTML/CSS/JS frontend para uma pasta "public"
-    "exclude": [".git", "node_modules", "wrangler.jsonc"]
-  },
-  "compatibility_flags": [
-    "nodejs_compat"
-  ]
+    "directory": "./public"
+  }
 }
