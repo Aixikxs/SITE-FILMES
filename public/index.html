@@ -459,16 +459,18 @@
     </footer>
 
     <script>
-        const API_URL = "https://api.allorigins.win/raw?url=https://superflixapi.pro";
-        const DIRECT_API_URL = "https://superflixapi.pro";
+        const API_BASE = "https://superflixapi.pro";
+        // Usando o CORS proxy para o navegador conseguir ler a API externa sem bloqueio
+        const API_URL = "https://api.allorigins.win/raw?url=" + encodeURIComponent(API_BASE);
         let categoriaAtual = "filmes";
         let debounceTimer;
 
+        // Mapeamento correto conforme a documentação oficial da API
         const categoryMap = {
-            'filmes': { apiCategory: 'filme', label: 'Filmes' },
-            'series': { apiCategory: 'serie', label: 'Séries' },
-            'animes': { apiCategory: 'anime', label: 'Animes' },
-            'canais': { apiCategory: 'canal', label: 'Canais ao Vivo' }
+            'filmes': { apiCategory: 'filme', label: 'Filmes', playerType: 'filme' },
+            'series': { apiCategory: 'serie', label: 'Séries', playerType: 'serie' },
+            'animes': { apiCategory: 'anime', label: 'Animes', playerType: 'serie' },
+            'canais': { apiCategory: 'canais', label: 'Canais ao Vivo', playerType: 'canal' }
         };
 
         async function carregarCategoria(catKey) {
@@ -478,15 +480,16 @@
             const activeBtn = document.getElementById(`btn-${catKey}`);
             if (activeBtn) activeBtn.classList.add('active');
 
-            const config = categoryMap[catKey] || { label: 'Catálogo', apiCategory: catKey };
+            const config = categoryMap[catKey] || { label: 'Catálogo', apiCategory: catKey, playerType: 'filme' };
             document.getElementById('sectionTitle').innerHTML = `Catálogo de ${config.label}`;
 
             document.getElementById('searchInput').value = '';
             mostrarCarregando();
 
             try {
-                const targetCategory = config.apiCategory;
-                const response = await fetch(`${API_URL}/lista?category=${targetCategory}&format=json`);
+                // Obrigatório adicionar &format=json conforme a documentação
+                const endpoint = `${API_BASE}/lista?category=${config.apiCategory}&format=json`;
+                const response = await fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent(endpoint)}`);
                 
                 if (!response.ok) throw new Error("Falha na resposta da API");
 
@@ -494,13 +497,7 @@
                 renderizarItens(data);
             } catch (err) {
                 console.error("Erro ao carregar categoria:", err);
-                try {
-                    const fallbackRes = await fetch(`${API_URL}/lista?category=${config.apiCategory}`);
-                    const fallbackData = await fallbackRes.json();
-                    renderizarItens(fallbackData);
-                } catch (fallbackErr) {
-                    mostrarErro("Não foi possível carregar este catálogo no momento. Tente novamente mais tarde.");
-                }
+                mostrarErro("Não foi possível carregar este catálogo no momento. Tente novamente mais tarde.");
             }
         }
 
@@ -512,7 +509,8 @@
             mostrarCarregando();
 
             try {
-                const response = await fetch(`${API_URL}/lista?category=pesquisa&q=${encodeURIComponent(query)}&format=json`);
+                const endpoint = `${API_BASE}/lista?category=pesquisa&q=${encodeURIComponent(query)}&format=json`;
+                const response = await fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent(endpoint)}`);
                 if (!response.ok) throw new Error("Erro na busca");
 
                 const data = await response.json();
@@ -555,12 +553,12 @@
                 const poster = item.poster || item.logo || item.image || item.cover || "https://via.placeholder.com/300x450/1c1c24/a0a0b0?text=Sem+Capa";
                 
                 const config = categoryMap[categoriaAtual] || {};
-                const playerTipo = config.apiCategory || 'filme';
+                const tipoPlayer = config.playerType || 'filme';
 
                 if (id) {
                     const card = document.createElement('div');
                     card.className = 'card';
-                    card.onclick = () => abrirPlayer(playerTipo, id, titulo);
+                    card.onclick = () => abrirPlayer(tipoPlayer, id);
 
                     card.innerHTML = `
                         <div class="card-poster">
@@ -581,25 +579,10 @@
             });
         }
 
-        async function abrirPlayer(tipo, id, titulo = "Filme") {
-            const urlCheck = `${DIRECT_API_URL}/${tipo}/${id}`;
-            
-            try {
-                const res = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(urlCheck)}`);
-                const data = await res.json();
-                
-                if (data && data.contents) {
-                    const match = data.contents.match(/src="(https:\/\/[^"]+)"/);
-                    if (match && match[1]) {
-                        window.open(match[1], '_blank');
-                        return;
-                    }
-                }
-            } catch (e) {
-                console.log("Erro ao buscar link direto, abrindo padrão...");
-            }
-
-            window.open(urlCheck, '_blank');
+        function abrirPlayer(tipo, id) {
+            // Conforme a documentação: /filme/ID ou /serie/ID
+            const urlFinal = `${API_BASE}/${tipo}/${id}`;
+            window.open(urlFinal, '_blank');
         }
 
         function mostrarCarregando() {
