@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Player - SiteFlix</title>
+    <link rel="stylesheet" href="css/global.css">
+    <link rel="stylesheet" href="css/player.css">
+</head>
+<body class="player-page">
+    <!-- Header -->
+    <header class="player-header">
+        <a href="javascript:history.back()" class="back-btn">← Voltar</a>
+        <h1 class="player-title" id="playerTitle">SiteFlix Player</h1>
+        <div class="player-header-spacer"></div>
+    </header>
+
+    <!-- Main Player Container -->
+    <div class="player-container">
+        <div class="player-wrapper" id="playerWrapper">
+            <!-- Player carregado via JavaScript -->
+        </div>
+    </div>
+
+    <!-- Player Info -->
+    <div class="player-info">
+        <div class="info-header">
+            <h2 class="info-title" id="infoTitle">Carregando...</h2>
+            <button class="btn-favorite" id="favoriteBtn">❤️ Favoritar</button>
+        </div>
+        <p class="info-description" id="infoDescription"></p>
+        
+        <!-- Episodes List (para séries) -->
+        <div class="episodes-section" id="episodesSection" style="display: none;">
+            <h3>Episódios</h3>
+            <div class="episodes-list" id="episodesList"></div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/api.js"></script>
+    <script src="js/storage.js"></script>
+    <script src="js/player.js"></script>
+</body>
+</html>

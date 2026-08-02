@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SiteFlix - Streaming de Filmes & Séries</title>
+    <link rel="stylesheet" href="css/global.css">
+    <link rel="stylesheet" href="css/home.css">
+    <link rel="stylesheet" href="css/animations.css">
+</head>
+<body>
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h1 class="logo">SiteFlix</h1>
+            <button class="close-sidebar" id="closeSidebar">
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="index.html" class="nav-link active" data-category="inicio">
+                <span class="nav-icon">🏠</span>
+                <span class="nav-text">Início</span>
+            </a>
+            <a href="filmes.html" class="nav-link" data-category="filmes">
+                <span class="nav-icon">🎬</span>
+                <span class="nav-text">Filmes</span>
+            </a>
+            <a href="series.html" class="nav-link" data-category="series">
+                <span class="nav-icon">📺</span>
+                <span class="nav-text">Séries</span>
+            </a>
+            <a href="animes.html" class="nav-link" data-category="animes">
+                <span class="nav-icon">✨</span>
+                <span class="nav-text">Animes</span>
+            </a>
+            <a href="doramas.html" class="nav-link" data-category="doramas">
+                <span class="nav-icon">💫</span>
+                <span class="nav-text">Doramas</span>
+            </a>
+            <a href="canais.html" class="nav-link" data-category="canais">
+                <span class="nav-icon">📡</span>
+                <span class="nav-text">Canais</span>
+            </a>
+        </nav>
+        <div class="sidebar-footer">
+            <button class="btn-favorites" id="favoritesBtn">
+                <span class="nav-icon">❤️</span>
+                <span class="nav-text">Favoritos</span>
+            </button>
+            <button class="btn-history" id="historyBtn">
+                <span class="nav-icon">⏱️</span>
+                <span class="nav-text">Histórico</span>
+            </button>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-container">
+        <!-- Header -->
+        <header class="header">
+            <button class="menu-toggle" id="menuToggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <div class="search-container">
+                <input type="text" class="search-input" id="searchInput" placeholder="Buscar filmes, séries, animes...">
+                <button class="search-btn">🔍</button>
+            </div>
+            <div class="header-actions">
+                <button class="theme-toggle" id="themeToggle">🌙</button>
+            </div>
+        </header>
+
+        <!-- Content Area -->
+        <div class="content">
+            <!-- Hero Banner -->
+            <section class="hero-banner">
+                <div class="hero-content">
+                    <div class="hero-text" id="heroText">
+                        <h2 class="hero-title">Bem-vindo ao SiteFlix</h2>
+                        <p class="hero-subtitle">Descubra milhares de filmes, séries, animes e doramas incríveis</p>
+                        <div class="hero-buttons">
+                            <button class="btn btn-primary" id="exploreBtn">Explorar Agora</button>
+                            <button class="btn btn-secondary" id="favoritesMainBtn">Meus Favoritos</button>
+                        </div>
+                    </div>
+                    <div class="hero-image" id="heroImage">
+                        <div class="neon-box"></div>
+                    </div>
+                </div>
+                <div class="hero-particles" id="heroParticles"></div>
+            </section>
+
+            <!-- Trending Section -->
+            <section class="trending-section">
+                <div class="section-header">
+                    <h2 class="section-title">🔥 Em Destaque</h2>
+                    <a href="filmes.html" class="view-all-link">Ver Tudo →</a>
+                </div>
+                <div class="carousel-container">
+                    <div class="carousel" id="trendingCarousel">
+                        <!-- Items carregados via JavaScript -->
+                    </div>
+                </div>
+            </section>
+
+            <!-- Popular Filmes -->
+            <section class="content-section">
+                <div class="section-header">
+                    <h2 class="section-title">🎬 Filmes Populares</h2>
+                    <a href="filmes.html" class="view-all-link">Ver Tudo →</a>
+                </div>
+                <div class="content-grid" id="popularMovies">
+                    <!-- Items carregados via JavaScript -->
+                </div>
+            </section>
+
+            <!-- Popular Séries -->
+            <section class="content-section">
+                <div class="section-header">
+                    <h2 class="section-title">📺 Séries em Alta</h2>
+                    <a href="series.html" class="view-all-link">Ver Tudo →</a>
+                </div>
+                <div class="content-grid" id="popularSeries">
+                    <!-- Items carregados via JavaScript -->
+                </div>
+            </section>
+
+            <!-- Popular Animes -->
+            <section class="content-section">
+                <div class="section-header">
+                    <h2 class="section-title">✨ Animes Populares</h2>
+                    <a href="animes.html" class="view-all-link">Ver Tudo →</a>
+                </div>
+                <div class="content-grid" id="popularAnimes">
+                    <!-- Items carregados via JavaScript -->
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- Modals -->
+    <div class="modal" id="detailsModal">
+        <div class="modal-content">
+            <button class="modal-close" id="modalClose">&times;</button>
+            <div class="modal-body" id="modalBody">
+                <!-- Conteúdo carregado dinamicamente -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/api.js"></script>
+    <script src="js/storage.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/home.js"></script>
+</body>
+</html>
