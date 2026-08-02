@@ -398,90 +398,6 @@
             to { transform: rotate(360deg); }
         }
 
-        .player-modal {
-            display: none;
-            position: fixed;
-            inset: 0;
-            z-index: 1000;
-            background: rgba(0, 0, 0, 0.92);
-            backdrop-filter: blur(12px);
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-            animation: modalFadeIn 0.3s ease forwards;
-        }
-
-        @keyframes modalFadeIn {
-            from { opacity: 0; transform: scale(0.98); }
-            to { opacity: 1; transform: scale(1); }
-        }
-
-        .player-wrapper {
-            width: 100%;
-            max-width: 1000px;
-            background: var(--bg-secondary);
-            border-radius: 16px;
-            overflow: hidden;
-            border: 1px solid var(--border-color);
-            box-shadow: 0 24px 48px rgba(0, 0, 0, 0.8), 0 0 40px rgba(229, 9, 20, 0.2);
-            display: flex;
-            flex-direction: column;
-        }
-
-        .player-header {
-            padding: 14px 20px;
-            background: var(--bg-card);
-            border-bottom: 1px solid var(--border-color);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .player-title {
-            font-size: 16px;
-            font-weight: 700;
-            color: var(--text-main);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .close-player-btn {
-            background: rgba(255, 255, 255, 0.1);
-            border: none;
-            color: var(--text-main);
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 16px;
-            transition: var(--transition-fast);
-        }
-
-        .close-player-btn:hover {
-            background: var(--accent-red);
-            transform: rotate(90deg);
-        }
-
-        .iframe-container {
-            position: relative;
-            width: 100%;
-            padding-top: 56.25%;
-            background: #000;
-        }
-
-        .iframe-container iframe {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            border: none;
-        }
-
         footer {
             border-top: 1px solid var(--border-color);
             padding: 24px;
@@ -538,28 +454,13 @@
         </div>
     </main>
 
-    <div class="player-modal" id="playerModal">
-        <div class="player-wrapper">
-            <div class="player-header">
-                <div class="player-title" id="playerModalTitle">
-                    <i class="fa-solid fa-circle-play" style="color: var(--accent-red);"></i> Assistindo
-                </div>
-                <button class="close-player-btn" onclick="fecharPlayer()" title="Fechar Player">
-                    <i class="fa-solid fa-xmark"></i>
-                </button>
-            </div>
-            <div class="iframe-container">
-                <iframe id="videoPlayer" src="" allowfullscreen allow="autoplay; encrypted-media"></iframe>
-            </div>
-        </div>
-    </div>
-
     <footer>
         <p>&copy; CineFlix - Todos os direitos reservados. Interface otimizada para streaming.</p>
     </footer>
 
     <script>
-        const API_URL = "https://superflixapi.pro";
+        const API_URL = "https://api.allorigins.win/raw?url=https://superflixapi.pro";
+        const DIRECT_API_URL = "https://superflixapi.pro";
         let categoriaAtual = "filmes";
         let debounceTimer;
 
@@ -681,31 +582,10 @@
         }
 
         function abrirPlayer(tipo, id, titulo = "Filme") {
-            const modal = document.getElementById('playerModal');
-            const iframe = document.getElementById('videoPlayer');
-            const modalTitle = document.getElementById('playerModalTitle');
-
-            modalTitle.innerHTML = `<i class="fa-solid fa-circle-play" style="color: var(--accent-red);"></i> Assistindo: ${titulo}`;
-            
-            iframe.src = `${API_URL}/${tipo}/${id}`;
-            modal.style.display = 'flex';
-            document.body.style.overflow = 'hidden';
+            // Abre o player diretamente na aba oficial para contornar a segurança e o Captcha do site
+            const urlOficial = `${DIRECT_API_URL}/${tipo}/${id}`;
+            window.open(urlOficial, '_blank');
         }
-
-        function fecharPlayer() {
-            const modal = document.getElementById('playerModal');
-            const iframe = document.getElementById('videoPlayer');
-
-            iframe.src = '';
-            modal.style.display = 'none';
-            document.body.style.overflow = 'auto';
-        }
-
-        document.getElementById('playerModal').addEventListener('click', function(e) {
-            if (e.target === this) {
-                fecharPlayer();
-            }
-        });
 
         function mostrarCarregando() {
             const grid = document.getElementById('moviesGrid');
