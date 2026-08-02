@@ -581,10 +581,25 @@
             });
         }
 
-        function abrirPlayer(tipo, id, titulo = "Filme") {
-            // Abre o player diretamente na aba oficial para contornar a segurança e o Captcha do site
-            const urlOficial = `${DIRECT_API_URL}/${tipo}/${id}`;
-            window.open(urlOficial, '_blank');
+        async function abrirPlayer(tipo, id, titulo = "Filme") {
+            const urlCheck = `${DIRECT_API_URL}/${tipo}/${id}`;
+            
+            try {
+                const res = await fetch(`https://api.allorigins.win/get?url=${encodeURIComponent(urlCheck)}`);
+                const data = await res.json();
+                
+                if (data && data.contents) {
+                    const match = data.contents.match(/src="(https:\/\/[^"]+)"/);
+                    if (match && match[1]) {
+                        window.open(match[1], '_blank');
+                        return;
+                    }
+                }
+            } catch (e) {
+                console.log("Erro ao buscar link direto, abrindo padrão...");
+            }
+
+            window.open(urlCheck, '_blank');
         }
 
         function mostrarCarregando() {
