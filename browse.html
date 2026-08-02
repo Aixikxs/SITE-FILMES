@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Navegação - SITEFLIX</title>
+    <link rel="stylesheet" href="css/global.css">
+    <link rel="stylesheet" href="css/content-page.css">
+    <link rel="stylesheet" href="css/animations.css">
+</head>
+<body>
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="logo">SITEFLIX</div>
+            <button class="close-sidebar" id="closeSidebar">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="index.html" class="nav-link">
+                <span class="nav-icon">🏠</span>
+                <span class="nav-text">Início</span>
+            </a>
+            <a href="browse.html?type=movies" class="nav-link active">
+                <span class="nav-icon">🎬</span>
+                <span class="nav-text">Filmes</span>
+            </a>
+            <a href="browse.html?type=series" class="nav-link">
+                <span class="nav-icon">📺</span>
+                <span class="nav-text">Séries</span>
+            </a>
+            <a href="#favorites" class="nav-link">
+                <span class="nav-icon">❤️</span>
+                <span class="nav-text">Favoritos</span>
+            </a>
+            <a href="#history" class="nav-link">
+                <span class="nav-icon">🕐</span>
+                <span class="nav-text">Histórico</span>
+            </a>
+        </nav>
+        <div class="sidebar-footer">
+            <button class="btn-favorites" id="favoritesBtn">
+                <span class="nav-icon">❤️</span>
+                <span>Favoritos</span>
+            </button>
+            <button class="btn-history" id="historyBtn">
+                <span class="nav-icon">🕐</span>
+                <span>Histórico</span>
+            </button>
+        </div>
+    </aside>
+
+    <!-- Main Container -->
+    <div class="main-container">
+        <!-- Header -->
+        <header class="header">
+            <button class="menu-toggle" id="menuToggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            
+            <div class="search-container">
+                <input type="text" class="search-input" id="searchInput" placeholder="Buscar filmes, séries...">
+                <button class="search-btn" id="searchBtn">🔍</button>
+            </div>
+            
+            <div class="header-actions">
+                <button class="theme-toggle" id="themeToggle" title="Alternar tema">🌙</button>
+            </div>
+        </header>
+
+        <!-- Content -->
+        <main class="content">
+            <!-- Page Header -->
+            <div class="page-header">
+                <h1 class="page-title">Explorar Conteúdo</h1>
+                <p class="page-subtitle">Descubra novos filmes e séries para assistir</p>
+            </div>
+
+            <!-- Filters Section -->
+            <section class="filters-section">
+                <select class="filter-select" id="typeFilter">
+                    <option value="all">Todos os Tipos</option>
+                    <option value="movies">Filmes</option>
+                    <option value="series">Séries</option>
+                </select>
+                
+                <select class="filter-select" id="genreFilter">
+                    <option value="">Todos os Gêneros</option>
+                    <option value="action">Ação</option>
+                    <option value="comedy">Comédia</option>
+                    <option value="drama">Drama</option>
+                    <option value="horror">Terror</option>
+                    <option value="scifi">Ficção Científica</option>
+                    <option value="romance">Romance</option>
+                </select>
+                
+                <select class="filter-select" id="sortFilter">
+                    <option value="trending">Em Destaque</option>
+                    <option value="popular">Mais Popular</option>
+                    <option value="rating">Melhor Avaliado</option>
+                    <option value="newest">Mais Recente</option>
+                </select>
+            </section>
+
+            <!-- Content Grid -->
+            <div class="content-grid" id="contentGrid"></div>
+
+            <!-- Load More Button -->
+            <div class="load-more-container">
+                <button class="btn btn-primary" id="loadMoreBtn">Carregar Mais</button>
+            </div>
+
+            <!-- Empty State (hidden by default) -->
+            <div class="empty-state" id="emptyState" style="display: none;">
+                <div class="empty-state-icon">🎬</div>
+                <h2 class="empty-state-title">Nenhum conteúdo encontrado</h2>
+                <p class="empty-state-text">Tente ajustar seus filtros ou buscar por algo diferente</p>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal de Detalhes -->
+    <div class="modal" id="detailsModal">
+        <div class="modal-content">
+            <button class="modal-close" id="modalClose">✕</button>
+            <div id="modalBody"></div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/api.js"></script>
+    <script src="js/storage.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/browse.js"></script>
+</body>
+</html>
