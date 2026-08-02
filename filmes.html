@@ -1,136 +1,139 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Filmes - SiteFlix</title>
-    <link rel="stylesheet" href="css/global.css">
-    <link rel="stylesheet" href="css/content-page.css">
-    <link rel="stylesheet" href="css/animations.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Filmes - SiteFlix</title>
+
+<link rel="stylesheet" href="css/global.css">
+
+<style>
+body {
+    background: #111;
+    color: white;
+    font-family: Arial, sans-serif;
+}
+
+.container {
+    padding: 20px;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 20px;
+}
+
+.card {
+    background: #222;
+    padding: 15px;
+    border-radius: 10px;
+}
+
+.card h3 {
+    font-size: 16px;
+}
+
+button {
+    background: red;
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 5px;
+}
+</style>
+
 </head>
+
 <body>
-    <!-- Sidebar Navigation -->
-    <aside class="sidebar" id="sidebar">
-        <div class="sidebar-header">
-            <h1 class="logo">SiteFlix</h1>
-            <button class="close-sidebar" id="closeSidebar">
-                <span></span>
-                <span></span>
-            </button>
-        </div>
-        <nav class="sidebar-nav">
-            <a href="index.html" class="nav-link" data-category="inicio">
-                <span class="nav-icon">🏠</span>
-                <span class="nav-text">Início</span>
-            </a>
-            <a href="filmes.html" class="nav-link active" data-category="filmes">
-                <span class="nav-icon">🎬</span>
-                <span class="nav-text">Filmes</span>
-            </a>
-            <a href="series.html" class="nav-link" data-category="series">
-                <span class="nav-icon">📺</span>
-                <span class="nav-text">Séries</span>
-            </a>
-            <a href="animes.html" class="nav-link" data-category="animes">
-                <span class="nav-icon">✨</span>
-                <span class="nav-text">Animes</span>
-            </a>
-            <a href="doramas.html" class="nav-link" data-category="doramas">
-                <span class="nav-icon">💫</span>
-                <span class="nav-text">Doramas</span>
-            </a>
-            <a href="canais.html" class="nav-link" data-category="canais">
-                <span class="nav-icon">📡</span>
-                <span class="nav-text">Canais</span>
-            </a>
-        </nav>
-        <div class="sidebar-footer">
-            <button class="btn-favorites" id="favoritesBtn">
-                <span class="nav-icon">❤️</span>
-                <span class="nav-text">Favoritos</span>
-            </button>
-            <button class="btn-history" id="historyBtn">
-                <span class="nav-icon">⏱️</span>
-                <span class="nav-text">Histórico</span>
-            </button>
-        </div>
-    </aside>
 
-    <!-- Main Content -->
-    <main class="main-container">
-        <!-- Header -->
-        <header class="header">
-            <button class="menu-toggle" id="menuToggle">
-                <span></span>
-                <span></span>
-                <span></span>
-            </button>
-            <div class="search-container">
-                <input type="text" class="search-input" id="searchInput" placeholder="Buscar filmes...">
-                <button class="search-btn">🔍</button>
-            </div>
-            <div class="header-actions">
-                <button class="theme-toggle" id="themeToggle">🌙</button>
-            </div>
-        </header>
+<div class="container">
 
-        <!-- Content Area -->
-        <div class="content">
-            <div class="page-header">
-                <h1 class="page-title">🎬 Filmes</h1>
-                <p class="page-subtitle">Explore a maior coleção de filmes</p>
-            </div>
+<h1>🎬 Filmes</h1>
 
-            <!-- Filters -->
-            <div class="filters-section">
-                <select class="filter-select" id="genreFilter">
-                    <option value="">Todos os Gêneros</option>
-                    <option value="action">Ação</option>
-                    <option value="drama">Drama</option>
-                    <option value="comedy">Comédia</option>
-                    <option value="horror">Terror</option>
-                    <option value="sci-fi">Ficção Científica</option>
-                </select>
-                <select class="filter-select" id="yearFilter">
-                    <option value="">Todos os Anos</option>
-                    <option value="2024">2024</option>
-                    <option value="2023">2023</option>
-                    <option value="2022">2022</option>
-                    <option value="2021">2021</option>
-                </select>
-                <select class="filter-select" id="sortFilter">
-                    <option value="trending">Mais Assistidos</option>
-                    <option value="newest">Mais Recentes</option>
-                    <option value="rating">Melhor Avaliação</option>
-                </select>
-            </div>
+<div class="grid" id="moviesGrid">
+Carregando filmes...
+</div>
 
-            <!-- Content Grid -->
-            <div class="content-grid" id="moviesGrid">
-                <!-- Items carregados via JavaScript -->
-            </div>
+</div>
 
-            <!-- Load More -->
-            <div class="load-more-container">
-                <button class="btn btn-primary" id="loadMoreBtn">Carregar Mais</button>
-            </div>
-        </div>
-    </main>
 
-    <!-- Modals -->
-    <div class="modal" id="detailsModal">
-        <div class="modal-content">
-            <button class="modal-close" id="modalClose">&times;</button>
-            <div class="modal-body" id="modalBody">
-                <!-- Conteúdo carregado dinamicamente -->
-            </div>
-        </div>
-    </div>
+<script>
 
-    <!-- Scripts -->
-    <script src="js/api.js"></script>
-    <script src="js/storage.js"></script>
-    <script src="js/ui.js"></script>
-    <script src="js/content-page.js"></script>
+const API = "https://superflixapi.pro";
+
+
+async function carregarFilmes(){
+
+const grid = document.getElementById("moviesGrid");
+
+
+try {
+
+const resposta = await fetch(
+API + "/lista?category=filme&type=tmdb&format=json"
+);
+
+
+const ids = await resposta.json();
+
+
+grid.innerHTML = "";
+
+
+ids.slice(0,20).forEach(id=>{
+
+
+let card = document.createElement("div");
+
+card.className="card";
+
+
+card.innerHTML = `
+
+<h3>Filme ID: ${id}</h3>
+
+<button onclick="assistir('${id}')">
+Assistir
+</button>
+
+`;
+
+
+grid.appendChild(card);
+
+
+});
+
+
+}catch(e){
+
+grid.innerHTML="Erro ao carregar filmes";
+
+console.log(e);
+
+}
+
+
+}
+
+
+
+function assistir(id){
+
+window.location.href =
+"player.html?id="+id+"&type=filme";
+
+}
+
+
+
+carregarFilmes();
+
+
+</script>
+
+
 </body>
 </html>
