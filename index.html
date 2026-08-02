@@ -3,43 +3,478 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CineFlix</title>
+    <title>CineFlix - Catálogo de Vídeos</title>
+    
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #141414; color: #fff; padding: 20px; }
-        h1 { color: #e50914; margin-bottom: 20px; text-align: center; }
-        .search-box { display: flex; max-width: 500px; margin: 0 auto 30px auto; gap: 10px; }
-        input { flex: 1; padding: 12px; font-size: 16px; border-radius: 6px; border: 1px solid #333; background: #222; color: #fff; outline: none; }
-        button { padding: 12px 24px; font-size: 16px; font-weight: bold; background: #e50914; color: #fff; border: none; border-radius: 6px; cursor: pointer; transition: 0.2s; }
-        button:hover { background: #b81d24; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 15px; }
-        .card { background: #1f1f1f; border-radius: 8px; overflow: hidden; cursor: pointer; transition: transform 0.2s; text-align: center; padding-bottom: 8px; }
-        .card:hover { transform: scale(1.05); }
-        .card img { width: 100%; height: 210px; object-fit: cover; }
-        .card p { font-size: 13px; margin-top: 8px; padding: 0 5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-        .player-container { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 1000; justify-content: center; align-items: center; flex-direction: column; }
-        .player-container iframe { width: 90%; max-width: 900px; height: 70vh; border: none; border-radius: 8px; }
-        .close-btn { margin-bottom: 12px; background: #fff; color: #000; padding: 8px 18px; font-weight: bold; border-radius: 20px; cursor: pointer; border: none; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-bg: #141414;
+            --secondary-bg: #1f1f1f;
+            --accent-red: #E50914;
+            --accent-hover: #f40812;
+            --text-primary: #ffffff;
+            --text-secondary: #b3b3b3;
+            --border-subtle: #404040;
+            --transition-smooth: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--primary-bg);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* HEADER */
+        header {
+            background: linear-gradient(180deg, rgba(20, 20, 20, 0.95) 0%, rgba(20, 20, 20, 0.8) 100%);
+            backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid var(--border-subtle);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .header-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 2rem;
+            flex-wrap: wrap;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 1.8rem;
+            font-weight: 800;
+            letter-spacing: -1px;
+            white-space: nowrap;
+        }
+
+        .logo span {
+            color: var(--accent-red);
+            font-style: italic;
+        }
+
+        .search-container {
+            flex: 1;
+            min-width: 250px;
+            max-width: 500px;
+        }
+
+        .search-container input {
+            width: 100%;
+            padding: 0.75rem 1.25rem;
+            border: 2px solid var(--border-subtle);
+            border-radius: 8px;
+            background-color: var(--secondary-bg);
+            color: var(--text-primary);
+            font-size: 0.95rem;
+            transition: var(--transition-smooth);
+        }
+
+        .search-container input::placeholder {
+            color: var(--text-secondary);
+        }
+
+        .search-container input:focus {
+            outline: none;
+            border-color: var(--accent-red);
+            box-shadow: 0 0 20px rgba(229, 9, 20, 0.3);
+            background-color: rgba(31, 31, 31, 0.8);
+        }
+
+        /* MAIN CONTENT */
+        main {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+        }
+
+        .section-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 2rem;
+            letter-spacing: -0.5px;
+            position: relative;
+            padding-left: 1rem;
+        }
+
+        .section-title::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 4px;
+            height: 1.8rem;
+            background: linear-gradient(180deg, var(--accent-red) 0%, rgba(229, 9, 20, 0.3) 100%);
+            border-radius: 2px;
+        }
+
+        /* GRID DE FILMES */
+        #moviesGrid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 1.5rem;
+            animation: fadeIn 0.6s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .card {
+            position: relative;
+            border-radius: 12px;
+            overflow: hidden;
+            cursor: pointer;
+            background-color: var(--secondary-bg);
+            aspect-ratio: 2/3;
+            transition: var(--transition-smooth);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: var(--transition-smooth);
+        }
+
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(229, 9, 20, 0.2) 0%, rgba(0, 0, 0, 0.8) 100%);
+            opacity: 0;
+            transition: var(--transition-smooth);
+            z-index: 1;
+        }
+
+        .card:hover::before {
+            opacity: 1;
+        }
+
+        .card p {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 1rem;
+            background: linear-gradient(180deg, transparent 0%, rgba(0, 0, 0, 0.95) 100%);
+            font-size: 0.95rem;
+            font-weight: 600;
+            line-height: 1.4;
+            max-height: 100%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            z-index: 2;
+            transform: translateY(20px);
+            opacity: 0;
+            transition: var(--transition-smooth);
+        }
+
+        .card:hover {
+            transform: scale(1.08) translateY(-10px);
+            box-shadow: 0 16px 40px rgba(229, 9, 20, 0.3), 0 0 30px rgba(229, 9, 20, 0.1);
+        }
+
+        .card:hover img {
+            transform: scale(1.1);
+        }
+
+        .card:hover p {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .card::after {
+            content: '▶';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 3rem;
+            color: var(--accent-red);
+            opacity: 0;
+            transition: var(--transition-smooth);
+            z-index: 3;
+            text-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+        }
+
+        .card:hover::after {
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1.2);
+        }
+
+        /* EMPTY STATE */
+        #moviesGrid p {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 3rem 1rem;
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+        }
+
+        /* MODAL PLAYER */
+        #playerModal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.98);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            padding: 1rem;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        .player-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            max-width: 1200px;
+            max-height: 800px;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.8);
+        }
+
+        #videoPlayer {
+            width: 100%;
+            height: 100%;
+            border: none;
+            border-radius: 12px;
+        }
+
+        .close-button {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            width: 48px;
+            height: 48px;
+            background: rgba(0, 0, 0, 0.7);
+            border: 2px solid var(--accent-red);
+            color: var(--accent-red);
+            font-size: 2rem;
+            cursor: pointer;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition-smooth);
+            z-index: 1001;
+            font-weight: 300;
+            line-height: 1;
+        }
+
+        .close-button:hover {
+            background: var(--accent-red);
+            color: var(--primary-bg);
+            transform: rotate(90deg);
+        }
+
+        .close-button:active {
+            transform: rotate(90deg) scale(0.95);
+        }
+
+        /* FOOTER */
+        footer {
+            background-color: var(--secondary-bg);
+            border-top: 1px solid var(--border-subtle);
+            padding: 2rem;
+            text-align: center;
+            color: var(--text-secondary);
+            font-size: 0.85rem;
+            margin-top: 4rem;
+        }
+
+        /* RESPONSIVIDADE */
+        @media (max-width: 768px) {
+            .header-container {
+                gap: 1rem;
+            }
+
+            .logo {
+                font-size: 1.4rem;
+            }
+
+            .search-container {
+                min-width: 100%;
+                max-width: 100%;
+            }
+
+            main {
+                padding: 2rem 1rem;
+            }
+
+            .section-title {
+                font-size: 1.4rem;
+                margin-bottom: 1.5rem;
+            }
+
+            #moviesGrid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+                gap: 1rem;
+            }
+
+            .card:hover {
+                transform: scale(1.05) translateY(-8px);
+            }
+
+            .card::after {
+                font-size: 2rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            header {
+                padding: 1rem;
+            }
+
+            .header-container {
+                flex-direction: column;
+            }
+
+            .logo {
+                width: 100%;
+                text-align: center;
+            }
+
+            .search-container {
+                width: 100%;
+            }
+
+            .search-container input {
+                font-size: 16px;
+            }
+
+            main {
+                padding: 1.5rem 1rem;
+            }
+
+            .section-title {
+                font-size: 1.2rem;
+                margin-bottom: 1rem;
+            }
+
+            #moviesGrid {
+                grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+                gap: 0.8rem;
+            }
+
+            #playerModal {
+                padding: 0;
+            }
+
+            .player-container {
+                border-radius: 0;
+            }
+
+            #videoPlayer {
+                border-radius: 0;
+            }
+
+            .close-button {
+                width: 44px;
+                height: 44px;
+                font-size: 1.8rem;
+                top: 10px;
+                right: 10px;
+            }
+        }
+
+        /* ACESSIBILIDADE */
+        .card:focus-visible {
+            outline: 3px solid var(--accent-red);
+            outline-offset: 2px;
+        }
+
+        .search-container input:focus-visible {
+            outline: none;
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            * {
+                animation: none !important;
+                transition: none !important;
+            }
+        }
     </style>
 </head>
 <body>
+    <!-- HEADER -->
+    <header>
+        <div class="header-container">
+            <div class="logo">
+                Cine<span>Flix</span>
+            </div>
+            <div class="search-container">
+                <input 
+                    type="text" 
+                    id="searchInput" 
+                    placeholder="🔍 Buscar filmes, séries..." 
+                    onkeypress="if(event.key === 'Enter') buscarFilmes()"
+                >
+            </div>
+        </div>
+    </header>
 
-    <h1>CineFlix</h1>
+    <!-- MAIN CONTENT -->
+    <main>
+        <h1 class="section-title">🎬 Catálogo em Destaque</h1>
+        <div id="moviesGrid"></div>
+    </main>
 
-    <div class="search-box">
-        <input type="text" id="searchInput" placeholder="Buscar filme...">
-        <button onclick="buscarFilmes()">Buscar</button>
+    <!-- FOOTER -->
+    <footer>
+        <p>&copy; 2024 CineFlix. Todos os direitos reservados. | Streaming de conteúdo sob demanda</p>
+    </footer>
+
+    <!-- MODAL PLAYER -->
+    <div id="playerModal">
+        <div class="player-container">
+            <button class="close-button" onclick="fecharPlayer()">✕</button>
+            <iframe id="videoPlayer"></iframe>
+        </div>
     </div>
 
-    <div class="grid" id="moviesGrid">
-        <p style="grid-column: 1/-1; text-align:center;">Carregando filmes...</p>
-    </div>
-
-    <div class="player-container" id="playerModal">
-        <button class="close-btn" onclick="fecharPlayer()">✕ Fechar Player</button>
-        <iframe id="videoPlayer" src="" allowfullscreen></iframe>
-    </div>
-
+    <!-- SCRIPT -->
     <script>
         const API_URL = "https://superflixapi.pro";
 
@@ -49,7 +484,7 @@
                 const data = await res.json();
                 renderizarFilmes(data);
             } catch (err) {
-                document.getElementById('moviesGrid').innerHTML = '<p style="grid-column: 1/-1; text-align:center;">Erro ao carregar catálogo.</p>';
+                document.getElementById('moviesGrid').innerHTML = '<p>Erro ao carregar catálogo.</p>';
             }
         }
 
@@ -57,24 +492,23 @@
             const query = document.getElementById('searchInput').value;
             if (!query) return carregarIniciais();
 
-            document.getElementById('moviesGrid').innerHTML = '<p style="grid-column: 1/-1; text-align:center;">Buscando...</p>';
+            document.getElementById('moviesGrid').innerHTML = '<p>Buscando...</p>';
             try {
                 const res = await fetch(`${API_URL}/lista?category=pesquisa&q=${encodeURIComponent(query)}&format=json`);
                 const data = await res.json();
                 renderizarFilmes(data);
             } catch (err) {
-                document.getElementById('moviesGrid').innerHTML = '<p style="grid-column: 1/-1; text-align:center;">Nenhum filme encontrado.</p>';
+                document.getElementById('moviesGrid').innerHTML = '<p>Nenhum filme encontrado.</p>';
             }
         }
 
         function renderizarFilmes(lista) {
             const grid = document.getElementById('moviesGrid');
             grid.innerHTML = '';
-
             const itens = Array.isArray(lista) ? lista : (lista.data || []);
 
             if (itens.length === 0) {
-                grid.innerHTML = '<p style="grid-column: 1/-1; text-align:center;">Nenhum resultado encontrado.</p>';
+                grid.innerHTML = '<p>Nenhum resultado encontrado.</p>';
                 return;
             }
 
@@ -101,6 +535,7 @@
             const iframe = document.getElementById('videoPlayer');
             iframe.src = `${API_URL}/${tipo}/${id}`;
             modal.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
         }
 
         function fecharPlayer() {
@@ -108,7 +543,14 @@
             const iframe = document.getElementById('videoPlayer');
             iframe.src = '';
             modal.style.display = 'none';
+            document.body.style.overflow = 'auto';
         }
+
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                fecharPlayer();
+            }
+        });
 
         carregarIniciais();
     </script>
