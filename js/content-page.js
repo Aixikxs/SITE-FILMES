@@ -3,18 +3,36 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     if (!grid) return;
 
-    const ids = await getMovies();
+    grid.innerHTML = "<h2>Carregando filmes...</h2>";
 
-    for (const id of ids.slice(0, 20)) {
-        const movie = await getMovie(id);
+    try {
+        const ids = await getMovies();
 
-        const card = document.createElement("div");
+        grid.innerHTML = "";
 
-        card.innerHTML = `
-            <h3>${movie.title || "Filme"}</h3>
-            <p>ID: ${id}</p>
-        `;
+        for (const id of ids.slice(0, 24)) {
+            const movie = await getMovie(id);
 
-        grid.appendChild(card);
+            const card = document.createElement("div");
+            card.className = "movie-card";
+
+            card.innerHTML = `
+                <img src="${movie.poster}" alt="${movie.title}">
+                <div class="movie-info">
+                    <h3>${movie.title}</h3>
+                    <p>${movie.year ?? ""}</p>
+                </div>
+            `;
+
+            card.onclick = () => {
+                window.location.href = `player.html?id=${id}&type=filme`;
+            };
+
+            grid.appendChild(card);
+        }
+
+    } catch (e) {
+        console.error(e);
+        grid.innerHTML = "<h2>Erro ao carregar os filmes.</h2>";
     }
 });
