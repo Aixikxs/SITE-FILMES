@@ -5,12 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CineFlix - Filmes, Séries, Animes e Canais</title>
     
-    <!-- Open Graph / Redes Sociais -->
-    <meta property="og:title" content="CineFlix - Filmes, Séries e Animes Online">
-    <meta property="og:description" content="Assista aos últimos lançamentos de filmes, séries, animes e canais ao vivo de graça!">
-    <meta property="og:type" content="website">
-
-    <!-- Fontes e Ícones -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -22,41 +16,20 @@
             --bg-secondary: #141418;
             --bg-card: #1c1c24;
             --accent-red: #e50914;
-            --accent-red-hover: #ff1e27;
             --text-main: #ffffff;
             --text-muted: #a0a0b0;
             --border-color: rgba(255, 255, 255, 0.08);
-            --shadow-glow: 0 8px 32px rgba(229, 9, 20, 0.25);
-            --transition-fast: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
 
         body {
             font-family: 'Plus Jakarta Sans', sans-serif;
             background-color: var(--bg-primary);
             color: var(--text-main);
             min-height: 100vh;
-            overflow-x: hidden;
             display: flex;
             flex-direction: column;
-        }
-
-        body::before {
-            content: '';
-            position: fixed;
-            top: -200px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 800px;
-            height: 400px;
-            background: radial-gradient(circle, rgba(229, 9, 20, 0.15) 0%, rgba(10, 10, 12, 0) 70%);
-            z-index: 0;
-            pointer-events: none;
         }
 
         header {
@@ -65,7 +38,6 @@
             z-index: 100;
             background: rgba(10, 10, 12, 0.85);
             backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
             border-bottom: 1px solid var(--border-color);
             padding: 16px 24px;
             display: flex;
@@ -74,548 +46,136 @@
         }
 
         @media (min-width: 768px) {
-            header {
-                flex-direction: row;
-                align-items: center;
-                justify-content: space-between;
-                padding: 18px 48px;
-            }
+            header { flex-direction: row; align-items: center; justify-content: space-between; padding: 18px 48px; }
         }
 
-        .logo-container {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            text-decoration: none;
-            cursor: pointer;
-        }
-
+        .logo-container { display: flex; align-items: center; gap: 10px; cursor: pointer; }
         .logo-icon {
-            background: var(--accent-red);
-            color: white;
-            width: 38px;
-            height: 38px;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 20px;
-            box-shadow: 0 4px 14px rgba(229, 9, 20, 0.4);
+            background: var(--accent-red); color: white; width: 38px; height: 38px;
+            border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px;
         }
+        .logo-text { font-size: 24px; font-weight: 800; color: #fff; }
+        .logo-text span { color: var(--accent-red); }
 
-        .logo-text {
-            font-size: 24px;
-            font-weight: 800;
-            letter-spacing: -0.5px;
-            background: linear-gradient(135deg, #ffffff 30%, var(--text-muted));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
+        .nav-tabs-wrapper { padding: 20px 24px 0 24px; }
+        @media (min-width: 768px) { .nav-tabs-wrapper { padding: 28px 48px 0 48px; } }
 
-        .logo-text span {
-            color: var(--accent-red);
-            -webkit-text-fill-color: var(--accent-red);
-        }
-
-        .search-box {
-            position: relative;
-            width: 100%;
-            max-width: 450px;
-        }
-
-        .search-box input {
-            width: 100%;
-            padding: 12px 18px 12px 46px;
-            background: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: 50px;
-            color: var(--text-main);
-            font-size: 14px;
-            font-family: inherit;
-            outline: none;
-            transition: var(--transition-fast);
-        }
-
-        .search-box input:focus {
-            border-color: var(--accent-red);
-            box-shadow: 0 0 0 4px rgba(229, 9, 20, 0.15);
-            background: var(--bg-secondary);
-        }
-
-        .search-box i {
-            position: absolute;
-            left: 18px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--text-muted);
-            font-size: 15px;
-            transition: var(--transition-fast);
-        }
-
-        .search-box input:focus + i {
-            color: var(--accent-red);
-        }
-
-        .nav-tabs-wrapper {
-            position: relative;
-            z-index: 10;
-            padding: 20px 24px 0 24px;
-        }
-
-        @media (min-width: 768px) {
-            .nav-tabs-wrapper {
-                padding: 28px 48px 0 48px;
-            }
-        }
-
-        .nav-tabs {
-            display: flex;
-            gap: 10px;
-            overflow-x: auto;
-            padding-bottom: 8px;
-            scrollbar-width: none;
-        }
-
-        .nav-tabs::-webkit-scrollbar {
-            display: none;
-        }
-
+        .nav-tabs { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 8px; scrollbar-width: none; }
         .tab-btn {
-            background: var(--bg-secondary);
-            border: 1px solid var(--border-color);
-            color: var(--text-muted);
-            padding: 10px 20px;
-            border-radius: 30px;
-            font-size: 14px;
-            font-weight: 600;
-            cursor: pointer;
-            white-space: nowrap;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            transition: var(--transition-fast);
+            background: var(--bg-secondary); border: 1px solid var(--border-color);
+            color: var(--text-muted); padding: 10px 20px; border-radius: 30px;
+            font-size: 14px; font-weight: 600; cursor: pointer; white-space: nowrap;
+            display: flex; align-items: center; gap: 8px; transition: 0.2s;
         }
+        .tab-btn:hover, .tab-btn.active { background: var(--accent-red); color: #fff; border-color: var(--accent-red); }
 
-        .tab-btn:hover {
-            color: var(--text-main);
-            border-color: rgba(255, 255, 255, 0.2);
-            background: var(--bg-card);
-        }
+        main { flex: 1; padding: 24px; }
+        @media (min-width: 768px) { main { padding: 32px 48px; } }
 
-        .tab-btn.active {
-            background: var(--accent-red);
-            color: #ffffff;
-            border-color: var(--accent-red);
-            box-shadow: 0 4px 16px rgba(229, 9, 20, 0.35);
-        }
+        .section-title { font-size: 20px; font-weight: 700; margin-bottom: 24px; display: flex; align-items: center; gap: 10px; }
+        .section-title::before { content: ''; width: 4px; height: 20px; background: var(--accent-red); border-radius: 4px; }
 
-        main {
-            flex: 1;
-            position: relative;
-            z-index: 1;
-            padding: 24px;
-        }
-
-        @media (min-width: 768px) {
-            main {
-                padding: 32px 48px;
-            }
-        }
-
-        .section-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 24px;
-        }
-
-        .section-title {
-            font-size: 20px;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .section-title::before {
-            content: '';
-            width: 4px;
-            height: 20px;
-            background: var(--accent-red);
-            border-radius: 4px;
-        }
-
-        .movies-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-            gap: 16px;
-        }
-
-        @media (min-width: 576px) {
-            .movies-grid {
-                grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
-                gap: 20px;
-            }
-        }
-
-        @media (min-width: 992px) {
-            .movies-grid {
-                grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
-                gap: 24px;
-            }
-        }
+        .movies-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 20px; }
 
         .card {
-            background: var(--bg-card);
-            border-radius: 14px;
-            overflow: hidden;
-            position: relative;
-            cursor: pointer;
-            border: 1px solid var(--border-color);
-            transition: var(--transition-fast);
-            display: flex;
-            flex-direction: column;
-            animation: fadeIn 0.4s ease forwards;
+            background: var(--bg-card); border-radius: 14px; overflow: hidden;
+            cursor: pointer; border: 1px solid var(--border-color);
+            display: flex; flex-direction: column; text-decoration: none; transition: 0.3s;
+        }
+        .card:hover { transform: translateY(-6px); border-color: rgba(255,255,255,0.3); }
+
+        .card-banner {
+            width: 100%; aspect-ratio: 16/9; background: var(--bg-secondary);
+            display: flex; align-items: center; justify-content: center;
+            font-size: 32px; color: var(--accent-red);
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(12px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+        .card-info { padding: 16px; }
+        .card-title { font-size: 15px; font-weight: 600; color: #fff; margin-bottom: 6px; }
+        .card-desc { font-size: 12px; color: var(--text-muted); }
 
-        .card:hover {
-            transform: translateY(-8px) scale(1.02);
-            border-color: rgba(255, 255, 255, 0.25);
-            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.6), 0 0 20px rgba(229, 9, 20, 0.15);
-        }
-
-        .card-poster {
-            position: relative;
-            width: 100%;
-            aspect-ratio: 2 / 3;
-            overflow: hidden;
-            background: var(--bg-secondary);
-        }
-
-        .card-poster img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: transform 0.4s ease;
-        }
-
-        .card:hover .card-poster img {
-            transform: scale(1.08);
-        }
-
-        .play-overlay {
-            position: absolute;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(2px);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            opacity: 0;
-            transition: var(--transition-fast);
-        }
-
-        .card:hover .play-overlay {
-            opacity: 1;
-        }
-
-        .play-btn-icon {
-            width: 50px;
-            height: 50px;
-            background: var(--accent-red);
-            color: white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 20px;
-            transform: scale(0.8);
-            transition: var(--transition-fast);
-            box-shadow: 0 4px 20px rgba(229, 9, 20, 0.6);
-        }
-
-        .card:hover .play-btn-icon {
-            transform: scale(1);
-        }
-
-        .card-info {
-            padding: 12px 14px;
-            background: var(--bg-card);
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-        }
-
-        .card-title {
-            font-size: 14px;
-            font-weight: 600;
-            color: var(--text-main);
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .card-type {
-            font-size: 12px;
-            color: var(--text-muted);
-            margin-top: 4px;
-            text-transform: capitalize;
-        }
-
-        .state-container {
-            grid-column: 1 / -1;
-            padding: 80px 20px;
-            text-align: center;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 16px;
-            color: var(--text-muted);
-        }
-
-        .state-icon {
-            font-size: 40px;
-            color: var(--accent-red);
-        }
-
-        .spinner {
-            width: 40px;
-            height: 40px;
-            border: 3px solid rgba(229, 9, 20, 0.2);
-            border-top-color: var(--accent-red);
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        footer {
-            border-top: 1px solid var(--border-color);
-            padding: 24px;
-            text-align: center;
-            color: var(--text-muted);
-            font-size: 13px;
-            background: var(--bg-primary);
-            margin-top: auto;
-        }
+        footer { border-top: 1px solid var(--border-color); padding: 24px; text-align: center; color: var(--text-muted); font-size: 13px; }
     </style>
 </head>
 <body>
 
     <header>
-        <div class="logo-container" onclick="carregarCategoria('filmes')">
-            <div class="logo-icon">
-                <i class="fa-solid fa-play"></i>
-            </div>
+        <div class="logo-container" onclick="mudarAba('filmes')">
+            <div class="logo-icon"><i class="fa-solid fa-play"></i></div>
             <div class="logo-text">Cine<span>Flix</span></div>
-        </div>
-
-        <div class="search-box">
-            <input type="text" id="searchInput" placeholder="Buscar por filmes, séries, animes..." onkeyup="handleSearchKey(event)">
-            <i class="fa-solid fa-magnifying-glass" onclick="buscarItens()"></i>
         </div>
     </header>
 
     <div class="nav-tabs-wrapper">
         <div class="nav-tabs">
-            <button class="tab-btn active" id="btn-filmes" onclick="carregarCategoria('filmes')">
-                <i class="fa-solid fa-film"></i> Filmes
-            </button>
-
-            <button class="tab-btn" id="btn-series" onclick="carregarCategoria('series')">
-                <i class="fa-solid fa-tv"></i> Séries
-            </button>
-
-            <button class="tab-btn" id="btn-animes" onclick="carregarCategoria('animes')">
-                <i class="fa-solid fa-dragon"></i> Animes
-            </button>
-
-            <button class="tab-btn" id="btn-canais" onclick="carregarCategoria('canais')">
-                <i class="fa-solid fa-tower-broadcast"></i> Canais ao Vivo
-            </button>
+            <button class="tab-btn active" id="btn-filmes" onclick="mudarAba('filmes')"><i class="fa-solid fa-film"></i> Catálogo de Filmes</button>
+            <button class="tab-btn" id="btn-series" onclick="mudarAba('series')"><i class="fa-solid fa-tv"></i> Catálogo de Séries</button>
+            <button class="tab-btn" id="btn-animes" onclick="mudarAba('animes')"><i class="fa-solid fa-dragon"></i> Catálogo de Animes</button>
+            <button class="tab-btn" id="btn-canais" onclick="mudarAba('canais')"><i class="fa-solid fa-tower-broadcast"></i> Canais ao Vivo</button>
+            <button class="tab-btn" id="btn-eventos" onclick="mudarAba('eventos')"><i class="fa-solid fa-futbol"></i> Eventos Esportivos</button>
         </div>
     </div>
 
     <main>
-        <div class="section-header">
-            <h2 class="section-title" id="sectionTitle">Catálogo de Filmes</h2>
-        </div>
-
+        <h2 class="section-title" id="sectionTitle">Acesso Direto aos Catálogos</h2>
         <div class="movies-grid" id="moviesGrid">
+            <!-- Os itens serão gerados aqui -->
         </div>
     </main>
 
     <footer>
-        <p>&copy; CineFlix - Todos os direitos reservados. Interface otimizada para streaming.</p>
+        <p>&copy; CineFlix - Todos os direitos reservados.</p>
     </footer>
 
     <script>
-        const API_BASE = "https://superflixapi.pro";
-        // Usando o CORS proxy para o navegador conseguir ler a API externa sem bloqueio
-        const API_URL = "https://api.allorigins.win/raw?url=" + encodeURIComponent(API_BASE);
-        let categoriaAtual = "filmes";
-        let debounceTimer;
-
-        // Mapeamento correto conforme a documentação oficial da API
-        const categoryMap = {
-            'filmes': { apiCategory: 'filme', label: 'Filmes', playerType: 'filme' },
-            'series': { apiCategory: 'serie', label: 'Séries', playerType: 'serie' },
-            'animes': { apiCategory: 'anime', label: 'Animes', playerType: 'serie' },
-            'canais': { apiCategory: 'canais', label: 'Canais ao Vivo', playerType: 'canal' }
+        const conteudos = {
+            'filmes': [
+                { titulo: "Abrir Lista Completa de Filmes", desc: "Acessar servidor oficial", url: "https://superflixapi.pro/lista?category=filme", icone: "fa-film" },
+                { titulo: "Filmes de Ação", desc: "Ver por gênero", url: "https://superflixapi.pro/lista?category=filme&type=generos", icone: "fa-fire" }
+            ],
+            'series': [
+                { titulo: "Abrir Lista Completa de Séries", desc: "Acessar servidor oficial", url: "https://superflixapi.pro/lista?category=serie", icone: "fa-tv" },
+                { titulo: "Séries de Drama", desc: "Ver por gênero", url: "https://superflixapi.pro/lista?category=serie&type=generos", icone: "fa-masks-theater" }
+            ],
+            'animes': [
+                { titulo: "Abrir Lista Completa de Animes", desc: "Acessar servidor oficial", url: "https://superflixapi.pro/lista?category=anime", icone: "fa-dragon" },
+                { titulo: "Animes Shounen", desc: "Ver por gênero", url: "https://superflixapi.pro/lista?category=anime&type=generos", icone: "fa-bolt" }
+            ],
+            'canais': [
+                { titulo: "Canais ao Vivo (Geral)", desc: "Lista pública de canais", url: "https://superflixapi.pro/lista?category=canais", icone: "fa-tower-broadcast" },
+                { titulo: "Guia de Programação (XMLTV)", desc: "Grade de horários", url: "https://superflixapi.pro/lista?category=guia", icone: "fa-calendar-days" }
+            ],
+            'eventos': [
+                { titulo: "Agenda de Eventos Esportivos", desc: "Futebol e Esportes Ao Vivo", url: "https://superflixapi.pro/lista?category=eventos", icone: "fa-futbol" }
+            ]
         };
 
-        async function carregarCategoria(catKey) {
-            categoriaAtual = catKey;
-
-            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-            const activeBtn = document.getElementById(`btn-${catKey}`);
-            if (activeBtn) activeBtn.classList.add('active');
-
-            const config = categoryMap[catKey] || { label: 'Catálogo', apiCategory: catKey, playerType: 'filme' };
-            document.getElementById('sectionTitle').innerHTML = `Catálogo de ${config.label}`;
-
-            document.getElementById('searchInput').value = '';
-            mostrarCarregando();
-
-            try {
-                // Obrigatório adicionar &format=json conforme a documentação
-                const endpoint = `${API_BASE}/lista?category=${config.apiCategory}&format=json`;
-                const response = await fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent(endpoint)}`);
-                
-                if (!response.ok) throw new Error("Falha na resposta da API");
-
-                const data = await response.json();
-                renderizarItens(data);
-            } catch (err) {
-                console.error("Erro ao carregar categoria:", err);
-                mostrarErro("Não foi possível carregar este catálogo no momento. Tente novamente mais tarde.");
-            }
-        }
-
-        async function buscarItens() {
-            const query = document.getElementById('searchInput').value.trim();
-            if (!query) return carregarCategoria(categoriaAtual);
-
-            document.getElementById('sectionTitle').innerText = `Resultados para: "${query}"`;
-            mostrarCarregando();
-
-            try {
-                const endpoint = `${API_BASE}/lista?category=pesquisa&q=${encodeURIComponent(query)}&format=json`;
-                const response = await fetch(`https://api.allorigins.win/raw?url=${encodeURIComponent(endpoint)}`);
-                if (!response.ok) throw new Error("Erro na busca");
-
-                const data = await response.json();
-                renderizarItens(data);
-            } catch (err) {
-                console.error("Erro na busca:", err);
-                mostrarErro("Nenhum resultado encontrado para a sua pesquisa.");
-            }
-        }
-
-        function handleSearchKey(event) {
-            clearTimeout(debounceTimer);
-            if (event.key === 'Enter') {
-                buscarItens();
-            } else {
-                debounceTimer = setTimeout(() => {
-                    if (document.getElementById('searchInput').value.trim().length >= 3) {
-                        buscarItens();
-                    } else if (document.getElementById('searchInput').value.trim().length === 0) {
-                        carregarCategoria(categoriaAtual);
-                    }
-                }, 600);
-            }
-        }
-
-        function renderizarItens(lista) {
+        function mudarAba(cat) {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(`btn-${cat}`).classList.add('active');
+            
             const grid = document.getElementById('moviesGrid');
+            document.getElementById('sectionTitleinnerText'] = `Acesso Direto - ${cat.toUpperCase()}`;
             grid.innerHTML = '';
 
-            const itens = Array.isArray(lista) ? lista : (lista.data || lista.results || []);
-
-            if (!itens || itens.length === 0) {
-                mostrarVazio("Nenhum item encontrado nesta categoria.");
-                return;
-            }
-
-            itens.forEach(item => {
-                const id = item.imdb || item.id || item.tmdb;
-                const titulo = item.nome || item.title || item.name || "Sem Título";
-                const poster = item.poster || item.logo || item.image || item.cover || "https://via.placeholder.com/300x450/1c1c24/a0a0b0?text=Sem+Capa";
-                
-                const config = categoryMap[categoriaAtual] || {};
-                const tipoPlayer = config.playerType || 'filme';
-
-                if (id) {
-                    const card = document.createElement('div');
-                    card.className = 'card';
-                    card.onclick = () => abrirPlayer(tipoPlayer, id);
-
-                    card.innerHTML = `
-                        <div class="card-poster">
-                            <img src="${poster}" alt="${titulo}" loading="lazy" onerror="this.src='https://via.placeholder.com/300x450/1c1c24/a0a0b0?text=Sem+Capa'">
-                            <div class="play-overlay">
-                                <div class="play-btn-icon">
-                                    <i class="fa-solid fa-play"></i>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="card-info">
-                            <div class="card-title" title="${titulo}">${titulo}</div>
-                            <div class="card-type">${config.label || 'Mídia'}</div>
-                        </div>
-                    `;
-                    grid.appendChild(card);
-                }
+            const lista = conteudos[cat] || [];
+            lista.forEach(item => {
+                const a = document.createElement('a');
+                a.className = 'card';
+                a.href = item.url;
+                a.target = '_blank';
+                a.innerHTML = `
+                    <div class="card-banner"><i class="fa-solid ${item.icone}"></i></div>
+                    <div class="card-info">
+                        <div class="card-title">${item.titulo}</div>
+                        <div class="card-desc">${item.desc}</div>
+                    </div>
+                `;
+                grid.appendChild(a);
             });
         }
 
-        function abrirPlayer(tipo, id) {
-            // Conforme a documentação: /filme/ID ou /serie/ID
-            const urlFinal = `${API_BASE}/${tipo}/${id}`;
-            window.open(urlFinal, '_blank');
-        }
-
-        function mostrarCarregando() {
-            const grid = document.getElementById('moviesGrid');
-            grid.innerHTML = `
-                <div class="state-container">
-                    <div class="spinner"></div>
-                    <p>Carregando catálogo...</p>
-                </div>
-            `;
-        }
-
-        function mostrarErro(mensagem) {
-            const grid = document.getElementById('moviesGrid');
-            grid.innerHTML = `
-                <div class="state-container">
-                    <i class="fa-solid fa-triangle-exclamation state-icon"></i>
-                    <p>${mensagem}</p>
-                </div>
-            `;
-        }
-
-        function mostrarVazio(mensagem) {
-            const grid = document.getElementById('moviesGrid');
-            grid.innerHTML = `
-                <div class="state-container">
-                    <i class="fa-solid fa-film state-icon"></i>
-                    <p>${mensagem}</p>
-                </div>
-            `;
-        }
-
-        carregarCategoria('filmes');
+        mudarAba('filmes');
     </script>
 </body>
 </html>
