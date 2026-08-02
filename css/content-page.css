@@ -1,0 +1,172 @@
+/* ============================================
+   SITEFLIX - CONTENT PAGE STYLES
+   ============================================ */
+
+.page-header {
+    margin-bottom: 40px;
+    padding-bottom: 30px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.page-title {
+    font-size: 40px;
+    font-weight: 900;
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 10px;
+}
+
+.page-subtitle {
+    font-size: 16px;
+    color: var(--text-secondary);
+}
+
+/* Filters Section */
+.filters-section {
+    display: flex;
+    gap: 15px;
+    margin-bottom: 40px;
+    flex-wrap: wrap;
+    padding: 20px;
+    background: rgba(0, 212, 255, 0.05);
+    border-radius: var(--border-radius);
+    border: 1px solid var(--border-color);
+}
+
+.filter-select {
+    padding: 10px 15px;
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: var(--border-radius);
+    color: var(--text-primary);
+    cursor: pointer;
+    font-size: 14px;
+    transition: all var(--transition-speed) ease;
+    min-width: 200px;
+}
+
+.filter-select:hover {
+    background: var(--card-bg-hover);
+    border-color: var(--primary-color);
+    box-shadow: 0 0 15px rgba(0, 212, 255, 0.2);
+}
+
+.filter-select:focus {
+    outline: none;
+    background: var(--card-bg-hover);
+    border-color: var(--primary-color);
+    box-shadow: var(--neon-blue);
+}
+
+.filter-select option {
+    background: var(--darker-bg);
+    color: var(--text-primary);
+}
+
+/* Load More Container */
+.load-more-container {
+    display: flex;
+    justify-content: center;
+    padding: 40px 0;
+}
+
+.load-more-container .btn {
+    min-width: 200px;
+    font-size: 16px;
+}
+
+/* Animações para entrada */
+.content-grid .card {
+    animation: cardSlideIn 0.5s ease forwards;
+}
+
+@keyframes cardSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.content-grid .card:nth-child(1) { animation-delay: 0.05s; }
+.content-grid .card:nth-child(2) { animation-delay: 0.1s; }
+.content-grid .card:nth-child(3) { animation-delay: 0.15s; }
+.content-grid .card:nth-child(4) { animation-delay: 0.2s; }
+.content-grid .card:nth-child(5) { animation-delay: 0.25s; }
+.content-grid .card:nth-child(6) { animation-delay: 0.3s; }
+.content-grid .card:nth-child(7) { animation-delay: 0.35s; }
+.content-grid .card:nth-child(8) { animation-delay: 0.4s; }
+
+/* Empty State */
+.empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 80px 20px;
+    text-align: center;
+}
+
+.empty-state-icon {
+    font-size: 80px;
+    margin-bottom: 20px;
+    opacity: 0.5;
+}
+
+.empty-state-title {
+    font-size: 24px;
+    font-weight: 700;
+    margin-bottom: 10px;
+    color: var(--text-primary);
+}
+
+.empty-state-text {
+    font-size: 14px;
+    color: var(--text-secondary);
+    max-width: 500px;
+}
+
+/* Responsivo */
+@media (max-width: 768px) {
+    .page-title {
+        font-size: 28px;
+    }
+
+    .page-subtitle {
+        font-size: 14px;
+    }
+
+    .filters-section {
+        flex-direction: column;
+    }
+
+    .filter-select {
+        width: 100%;
+        min-width: unset;
+    }
+}
+
+@media (max-width: 480px) {
+    .page-title {
+        font-size: 20px;
+    }
+
+    .page-subtitle {
+        font-size: 12px;
+    }
+
+    .filters-section {
+        padding: 15px;
+        gap: 10px;
+    }
+
+    .filter-select {
+        font-size: 12px;
+        padding: 8px 12px;
+    }
+}
