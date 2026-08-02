@@ -186,11 +186,130 @@
             transform: translateY(-2px);
         }
 
+        /* NAV DE CATEGORIAS */
+        nav.categories {
+            background: linear-gradient(180deg, 
+                rgba(0, 217, 255, 0.08) 0%,
+                rgba(107, 90, 255, 0.06) 50%,
+                rgba(26, 31, 58, 0.9) 100%);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 1.2rem 2rem;
+            position: fixed;
+            top: 85px;
+            left: 0;
+            right: 0;
+            z-index: 98;
+            border-bottom: 2px solid rgba(0, 217, 255, 0.2);
+            box-shadow: 
+                0 8px 32px rgba(0, 217, 255, 0.15),
+                inset 0 1px 0 rgba(255, 255, 255, 0.1);
+            animation: slideDown 0.8s cubic-bezier(0.34, 1.56, 0.64, 1) 0.1s backwards;
+        }
+
+        .categories-container {
+            max-width: 1600px;
+            margin: 0 auto;
+            display: flex;
+            gap: 1rem;
+            overflow-x: auto;
+            scroll-behavior: smooth;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(0, 217, 255, 0.3) transparent;
+        }
+
+        .categories-container::-webkit-scrollbar {
+            height: 4px;
+        }
+
+        .categories-container::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .categories-container::-webkit-scrollbar-thumb {
+            background: rgba(0, 217, 255, 0.3);
+            border-radius: 2px;
+        }
+
+        .categories-container::-webkit-scrollbar-thumb:hover {
+            background: rgba(0, 217, 255, 0.5);
+        }
+
+        .tab-btn {
+            padding: 0.8rem 1.8rem;
+            border: 2px solid rgba(0, 217, 255, 0.3);
+            border-radius: 12px;
+            background: linear-gradient(135deg, rgba(26, 31, 58, 0.5), rgba(42, 63, 95, 0.3));
+            color: var(--color-text-secondary);
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+            position: relative;
+            letter-spacing: 0.5px;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            animation: fadeInUp 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+            animation-fill-mode: both;
+        }
+
+        .tab-btn:nth-child(1) { animation-delay: 0.15s; }
+        .tab-btn:nth-child(2) { animation-delay: 0.2s; }
+        .tab-btn:nth-child(3) { animation-delay: 0.25s; }
+        .tab-btn:nth-child(4) { animation-delay: 0.3s; }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .tab-btn:hover {
+            border-color: rgba(0, 217, 255, 0.8);
+            background: linear-gradient(135deg, rgba(26, 31, 58, 0.8), rgba(42, 63, 95, 0.6));
+            color: var(--color-text);
+            transform: translateY(-4px);
+            box-shadow: 0 12px 32px rgba(0, 217, 255, 0.2);
+        }
+
+        .tab-btn.active {
+            border-color: var(--color-cyan);
+            background: linear-gradient(135deg, 
+                rgba(0, 217, 255, 0.25) 0%,
+                rgba(107, 90, 255, 0.15) 100%);
+            color: var(--color-cyan);
+            box-shadow: 
+                0 0 0 2px var(--color-cyan),
+                var(--glow-cyan),
+                0 12px 40px rgba(0, 217, 255, 0.25);
+            transform: translateY(-6px) scale(1.05);
+        }
+
+        .tab-btn.active::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 30px;
+            height: 3px;
+            background: linear-gradient(90deg, var(--color-cyan), var(--color-purple));
+            border-radius: 2px;
+            box-shadow: var(--glow-cyan);
+            animation: expandWidth 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
         /* MAIN CONTENT */
         main {
             max-width: 1600px;
             margin: 0 auto;
-            padding: 140px 2rem 4rem;
+            padding: 220px 2rem 4rem;
             position: relative;
             z-index: 1;
         }
@@ -270,7 +389,7 @@
             display: flex;
             flex-direction: column;
             group: card;
-            animation: cardSlideUp 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+            animation: cardBounceIn 0.7s cubic-bezier(0.34, 1.56, 0.64, 1);
             animation-fill-mode: both;
         }
 
@@ -282,14 +401,17 @@
         .card:nth-child(6) { animation-delay: 0.35s; }
         .card:nth-child(n+7) { animation-delay: 0.4s; }
 
-        @keyframes cardSlideUp {
-            from {
+        @keyframes cardBounceIn {
+            0% {
                 opacity: 0;
-                transform: translateY(40px);
+                transform: translateY(60px) scale(0.8);
             }
-            to {
+            50% {
+                transform: translateY(-10px);
+            }
+            100% {
                 opacity: 1;
-                transform: translateY(0);
+                transform: translateY(0) scale(1);
             }
         }
 
@@ -514,25 +636,24 @@
             animation: fadeInUp 0.8s ease-in-out 0.6s backwards;
         }
 
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
         /* RESPONSIVIDADE */
         @media (max-width: 1024px) {
             .header-container {
                 gap: 1.5rem;
             }
 
+            nav.categories {
+                top: 90px;
+                padding: 1rem 1.5rem;
+            }
+
+            .tab-btn {
+                padding: 0.75rem 1.5rem;
+                font-size: 0.95rem;
+            }
+
             main {
-                padding: 130px 1.5rem 3rem;
+                padding: 210px 1.5rem 3rem;
             }
 
             .section-title {
@@ -568,8 +689,22 @@
                 max-width: 100%;
             }
 
+            nav.categories {
+                top: 85px;
+                padding: 0.9rem 1rem;
+            }
+
+            .categories-container {
+                gap: 0.7rem;
+            }
+
+            .tab-btn {
+                padding: 0.7rem 1.2rem;
+                font-size: 0.9rem;
+            }
+
             main {
-                padding: 120px 1.5rem 2.5rem;
+                padding: 180px 1.5rem 2.5rem;
             }
 
             .section-title {
@@ -638,8 +773,22 @@
                 padding: 0.75rem 1.25rem;
             }
 
+            nav.categories {
+                top: 80px;
+                padding: 0.8rem 0.8rem;
+            }
+
+            .categories-container {
+                gap: 0.5rem;
+            }
+
+            .tab-btn {
+                padding: 0.6rem 1rem;
+                font-size: 0.85rem;
+            }
+
             main {
-                padding: 110px 1rem 2rem;
+                padding: 170px 1rem 2rem;
             }
 
             .section-title {
@@ -715,12 +864,30 @@
                         type="text" 
                         id="searchInput" 
                         placeholder="🔍  Buscar filmes, séries..." 
-                        onkeypress="if(event.key === 'Enter') buscarFilmes()"
+                        onkeypress="if(event.key === 'Enter') buscarItens()"
                     >
                 </div>
             </div>
         </div>
     </header>
+
+    <!-- NAV CATEGORIAS -->
+    <nav class="categories">
+        <div class="categories-container">
+            <button class="tab-btn active" id="btn-filme" onclick="carregarCategoria('filme')">
+                🎬 Filmes
+            </button>
+            <button class="tab-btn" id="btn-serie" onclick="carregarCategoria('serie')">
+                📺 Séries
+            </button>
+            <button class="tab-btn" id="btn-anime" onclick="carregarCategoria('anime')">
+                ✨ Animes
+            </button>
+            <button class="tab-btn" id="btn-canal" onclick="carregarCategoria('canal')">
+                📡 Canais
+            </button>
+        </div>
+    </nav>
 
     <!-- MAIN CONTENT -->
     <main>
@@ -744,50 +911,62 @@
     <!-- SCRIPT -->
     <script>
         const API_URL = "https://superflixapi.pro";
+        let categoriaAtual = "filme";
 
-        async function carregarIniciais() {
+        async function carregarCategoria(categoria) {
+            categoriaAtual = categoria;
+            
+            // Atualiza a classe ativa dos botões
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            const activeBtn = document.getElementById(`btn-${categoria}`);
+            if (activeBtn) activeBtn.classList.add('active');
+
+            const grid = document.getElementById('moviesGrid');
+            grid.innerHTML = '<p style="grid-column: 1/-1; text-align:center;">Carregando...</p>';
+
             try {
-                const res = await fetch(`${API_URL}/lista?category=filme&type=imdb&format=json`);
+                const res = await fetch(`${API_URL}/lista?category=${categoria}&type=imdb&format=json`);
                 const data = await res.json();
-                renderizarFilmes(data);
+                renderizarItens(data);
             } catch (err) {
-                document.getElementById('moviesGrid').innerHTML = '<p>Erro ao carregar catálogo.</p>';
+                grid.innerHTML = '<p style="grid-column: 1/-1; text-align:center;">Erro ao carregar catálogo.</p>';
             }
         }
 
-        async function buscarFilmes() {
+        async function buscarItens() {
             const query = document.getElementById('searchInput').value;
-            if (!query) return carregarIniciais();
+            if (!query) return carregarCategoria(categoriaAtual);
 
-            document.getElementById('moviesGrid').innerHTML = '<p>Buscando...</p>';
+            const grid = document.getElementById('moviesGrid');
+            grid.innerHTML = '<p style="grid-column: 1/-1; text-align:center;">Buscando...</p>';
             try {
                 const res = await fetch(`${API_URL}/lista?category=pesquisa&q=${encodeURIComponent(query)}&format=json`);
                 const data = await res.json();
-                renderizarFilmes(data);
+                renderizarItens(data);
             } catch (err) {
-                document.getElementById('moviesGrid').innerHTML = '<p>Nenhum filme encontrado.</p>';
+                grid.innerHTML = '<p style="grid-column: 1/-1; text-align:center;">Nenhum resultado encontrado.</p>';
             }
         }
 
-        function renderizarFilmes(lista) {
+        function renderizarItens(lista) {
             const grid = document.getElementById('moviesGrid');
             grid.innerHTML = '';
             const itens = Array.isArray(lista) ? lista : (lista.data || []);
 
             if (itens.length === 0) {
-                grid.innerHTML = '<p>Nenhum resultado encontrado.</p>';
+                grid.innerHTML = '<p style="grid-column: 1/-1; text-align:center;">Nenhum resultado encontrado.</p>';
                 return;
             }
 
             itens.forEach(item => {
                 const id = item.imdb || item.id || item.tmdb;
-                const titulo = item.nome || item.title || "Filme sem título";
+                const titulo = item.nome || item.title || "Sem título";
                 const poster = item.poster || item.logo || item.image || "https://via.placeholder.com/190x285?text=Sem+Capa";
 
                 if (id) {
                     const card = document.createElement('div');
                     card.className = 'card';
-                    card.onclick = () => abrirPlayer('filme', id);
+                    card.onclick = () => abrirPlayer(categoriaAtual, id);
                     card.innerHTML = `
                         <img src="${poster}" alt="${titulo}" onerror="this.src='https://via.placeholder.com/190x285?text=Sem+Capa'">
                         <p>${titulo}</p>
@@ -819,7 +998,7 @@
             }
         });
 
-        carregarIniciais();
+        carregarCategoria('filme');
     </script>
 </body>
 </html>
