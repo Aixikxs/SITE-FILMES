@@ -1,0 +1,296 @@
+/* ============================================
+   SITEFLIX - ANIMATION KEYFRAMES
+   ============================================ */
+
+/* Entrada suave */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes slideInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+/* Neon Glow */
+@keyframes neonGlow {
+    0%, 100% {
+        box-shadow: 0 0 20px rgba(0, 212, 255, 0.5);
+    }
+    50% {
+        box-shadow: 0 0 40px rgba(0, 212, 255, 0.8);
+    }
+}
+
+@keyframes neonGlowPurple {
+    0%, 100% {
+        box-shadow: 0 0 20px rgba(179, 0, 255, 0.5);
+    }
+    50% {
+        box-shadow: 0 0 40px rgba(179, 0, 255, 0.8);
+    }
+}
+
+/* Pulse */
+@keyframes pulseGlow {
+    0% {
+        box-shadow: 0 0 0 0 rgba(0, 212, 255, 0.7);
+    }
+    70% {
+        box-shadow: 0 0 0 20px rgba(0, 212, 255, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(0, 212, 255, 0);
+    }
+}
+
+/* Shimmer */
+@keyframes shimmer {
+    0% {
+        background-position: -1000px 0;
+    }
+    100% {
+        background-position: 1000px 0;
+    }
+}
+
+/* Rotate */
+@keyframes rotate {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Bounce */
+@keyframes bounce {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-20px);
+    }
+}
+
+/* Float */
+@keyframes floatAnim {
+    0%, 100% {
+        transform: translateY(0px);
+    }
+    50% {
+        transform: translateY(-15px);
+    }
+}
+
+/* Scale */
+@keyframes scaleIn {
+    from {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+@keyframes scaleOut {
+    from {
+        opacity: 1;
+        transform: scale(1);
+    }
+    to {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+}
+
+/* Spin */
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Wave */
+@keyframes wave {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    25% {
+        transform: translateY(-10px);
+    }
+    75% {
+        transform: translateY(10px);
+    }
+}
+
+/* Rainbow */
+@keyframes rainbow {
+    0% {
+        border-color: #ff0000;
+    }
+    16.67% {
+        border-color: #ff7f00;
+    }
+    33.33% {
+        border-color: #ffff00;
+    }
+    50% {
+        border-color: #00ff00;
+    }
+    66.67% {
+        border-color: #0000ff;
+    }
+    83.33% {
+        border-color: #4b0082;
+    }
+    100% {
+        border-color: #ff0000;
+    }
+}
+
+/* Particle */
+@keyframes particleFloat {
+    0% {
+        opacity: 0;
+        transform: translateY(100px) translateX(0);
+    }
+    50% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+        transform: translateY(-100px) translateX(100px);
+    }
+}
+
+/* Glow Text */
+@keyframes glowText {
+    0%, 100% {
+        text-shadow: 0 0 10px rgba(0, 212, 255, 0.5);
+    }
+    50% {
+        text-shadow: 0 0 20px rgba(0, 212, 255, 1);
+    }
+}
+
+/* Blink */
+@keyframes blink {
+    0%, 49% {
+        opacity: 1;
+    }
+    50%, 100% {
+        opacity: 0;
+    }
+}
+
+/* Slide and Fade */
+@keyframes slideAndFade {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Cards Grid Animation */
+@keyframes gridReveal {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Aplicar animações padrão */
+.fade-in {
+    animation: fadeIn 0.5s ease;
+}
+
+.slide-in-up {
+    animation: slideInUp 0.5s ease;
+}
+
+.slide-in-down {
+    animation: slideInDown 0.5s ease;
+}
+
+.scale-in {
+    animation: scaleIn 0.3s ease;
+}
+
+.bounce-in {
+    animation: bounce 0.6s ease;
+}
+
+.float {
+    animation: floatAnim 3s ease-in-out infinite;
+}
+
+.spin {
+    animation: spin 2s linear infinite;
+}
+
+.glow {
+    animation: neonGlow 2s ease-in-out infinite;
+}
+
+.glow-purple {
+    animation: neonGlowPurple 2s ease-in-out infinite;
+}
