@@ -1,4 +1,4 @@
-const ORIGIN = "https://superflixapi.baby";\nconst VIDSRC_ORIGIN = "https://vidsrc.sh";
+const ORIGIN = "https://superflixapi.monster";\nconst VIDSRC_ORIGIN = "https://vidsrc.sh";
 
 function cors(res) {
   res.setHeader("Access-Control-Allow-Origin", "*");
