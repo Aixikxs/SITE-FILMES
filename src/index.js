@@ -1,4 +1,4 @@
-const ORIGIN="https://superflixapi.baby";\nconst VIDSRC_ORIGIN="https://vidsrc.sh";
+const ORIGIN="https://superflixapi.monster";\nconst VIDSRC_ORIGIN="https://vidsrc.sh";
 function meta(html,name){const re=new RegExp("<meta[^>]+(?:property|name)=['\"]"+name+"['\"][^>]+content=['\"]([^'\"]*)['\"]","i");const m=html.match(re);return m?m[1].replace(/&amp;/g,"&").replace(/&quot;/g,'\"'):""}
 function htmlMeta(html){return{title:meta(html,"og:title")||meta(html,"twitter:title"),poster:meta(html,"og:image")||meta(html,"twitter:image"),description:meta(html,"og:description")||meta(html,"description")}}
 function typePath(type){return type==="filme"||type==="movie"?"movie":"tv"}
