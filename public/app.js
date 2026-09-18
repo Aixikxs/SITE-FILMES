@@ -34,7 +34,6 @@ async function list(category,extra=""){
     throw new Error(e?.message||"Falha na API");
   }
 }
-}
 function norm(x,type){
   if(typeof x==="string"||typeof x==="number")return{id:String(x),type,title:"",poster:"",year:""};
   x=x||{};
