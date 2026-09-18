@@ -1,11 +1,138 @@
-<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Player - SiteFlix</title><style>body{margin:0;background:#05070c;color:#fff;font-family:system-ui,sans-serif}.top{height:58px;display:flex;align-items:center;padding:0 16px;border-bottom:1px solid #202638;background:#0b0f18}.back{color:#fff;text-decoration:none;margin-right:18px}.title{font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.wrap{max-width:1200px;margin:auto;padding:16px}.video{width:100%;aspect-ratio:16/9;background:#000;border-radius:12px;overflow:hidden}.video iframe,.video video{width:100%;height:100%;border:0}.msg{padding:30px;text-align:center;color:#aab3c5}.controls,.episodes{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}.controls select,.episodes button{background:#171d2b;color:#fff;border:1px solid #30394e;border-radius:8px;padding:9px 12px}.episodes button.active{background:#7c5cff}.info{color:#aab3c5;margin-top:14px}</style></head><body><header class="top"><a class="back" href="/">← Voltar</a><span class="title" id="title">Player</span></header><main class="wrap"><div id="video" class="video"><div class="msg">Carregando player...</div></div><div id="controls" class="controls"></div><div id="episodes" class="episodes"></div><div id="info" class="info"></div></main><script>
-const API="/api",ORIGIN="https://superflixapi.monster",p=new URLSearchParams(location.search),type=(p.get("type")||"filme").toLowerCase(),id=p.get("id")||"",src=p.get("src")||"";let season=Math.max(1,Number(p.get("season")||1)),episode=Math.max(1,Number(p.get("episode")||1));
-const $=s=>document.querySelector(s),esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
-function isStream(u){return /\.(m3u8|mpd)(\?|#|$)/i.test(u)}
-function render(u){if(!u){$("#video").innerHTML='<div class="msg">Player não informado.</div>';return}if(isStream(u)){const v=document.createElement("video");v.src=u;v.controls=true;v.autoplay=true;v.playsInline=true;v.setAttribute("webkit-playsinline","");$("#video").innerHTML="";$("#video").append(v);v.play().catch(()=>{});return}$("#video").innerHTML='<iframe src="'+esc(u)+'" allow="autoplay *; encrypted-media *; picture-in-picture *; fullscreen *; clipboard-write *; accelerometer *; gyroscope *; web-share *" allowfullscreen></iframe>'}
-function play(){if(!id){$("#video").innerHTML='<div class="msg">Conteúdo não informado.</div>';return}const u=src||(type==="filme"?ORIGIN+"/filme/"+encodeURIComponent(id):type==="serie"||type==="anime"||type==="dorama"?ORIGIN+"/serie/"+encodeURIComponent(id)+"/"+season+"/"+episode:"");render(u);$("#info").textContent=type==="filme"?"Filme":type==="canal"?"Canal ao vivo":"Temporada "+season+" • Episódio "+episode}
-async function channel(){try{const r=await fetch(API+"/lista?category=canais&format=json",{cache:"no-store"}),d=await r.json(),a=Array.isArray(d)?d:(d?.items||d?.results||d?.data||[]),x=a.find(v=>[v?.id,v?.tmdb_id,v?.slug,v?.uid,v?.name,v?.title,v?.channel_name].some(z=>String(z??"")===String(id)));const u=src||x?.stream_url||x?.m3u8_url||x?.hls_url||x?.m3u8||x?.play_url||x?.player_url||x?.embed_url||x?.iframe_url||"";$("#title").textContent=x?.name||x?.title||x?.channel_name||"Canal";$("#info").textContent="Canal ao vivo";render(u);if(!u)$("#video").innerHTML='<div class="msg">Este canal não forneceu um endereço de reprodução.</div>'}catch(e){console.error(e);$("#video").innerHTML='<div class="msg">Não foi possível carregar o canal.</div>'}}
-function renderSeasons(seasons){const c=$("#controls"),b=$("#episodes");c.innerHTML="";b.innerHTML="";if(!Array.isArray(seasons)||!seasons.length)return;const s=document.createElement("select");seasons.forEach((v,i)=>{const n=Number(v.season_number??v.number??i+1);if(!Number.isFinite(n)||n<1)return;const o=document.createElement("option");o.value=n;o.textContent="Temporada "+n;s.append(o)});s.value=String(season);if(!s.value)season=Number(s.options[0]?.value||1);s.onchange=()=>{season=Number(s.value);episode=1;renderEpisodes(seasons);play()};c.append(s);renderEpisodes(seasons)}
-function renderEpisodes(seasons){const b=$("#episodes");b.innerHTML="";const chosen=seasons.find(v=>Number(v.season_number??v.number)===season),count=Number(chosen?.episode_count||0);if(!Number.isInteger(count)||count<1)return;for(let i=1;i<=count;i++){const x=document.createElement("button");x.textContent="Episódio "+i;x.className=i===episode?"active":"";x.onclick=()=>{episode=i;renderEpisodes(seasons);play()};b.append(x)}}
-(async()=>{if(!id){$("#video").innerHTML='<div class="msg">Conteúdo não informado.</div>';return}if(type==="canal")return channel();try{const d=await fetch(API+"/meta?type="+encodeURIComponent(type)+"&id="+encodeURIComponent(id),{cache:"no-store"}).then(r=>r.json());$("#title").textContent=d.title||"Player";renderSeasons(d.seasons)}catch{}play()})();
-</script></body></html>
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#080911">
+<title>Player — SiteFlix</title>
+<link rel="stylesheet" href="/styles.css">
+<style>
+.player-page{min-height:100vh;background:#05070c;color:#fff}
+.player-top{height:68px;display:flex;align-items:center;gap:18px;padding:0 clamp(16px,4vw,48px);border-bottom:1px solid rgba(255,255,255,.08);background:rgba(8,9,17,.92)}
+.back{color:#fff;text-decoration:none}
+.player-main{max-width:1200px;margin:auto;padding:22px clamp(16px,4vw,48px)}
+.video{width:100%;aspect-ratio:16/9;background:#000;border:1px solid rgba(255,255,255,.08);border-radius:14px;overflow:hidden;display:grid;place-items:center}
+.video iframe{width:100%;height:100%;border:0}
+.msg{padding:30px;text-align:center;color:#aab3c5}
+.info{color:#aab3c5;line-height:1.6;margin-top:14px}
+.controls,.episodes{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.controls select,.episodes button{background:#171d2b;color:#fff;border:1px solid #30394e;border-radius:8px;padding:9px 12px}
+.episodes button.active{background:#7c5cff;border-color:#7c5cff}
+</style>
+</head>
+<body class="player-page">
+<header class="player-top">
+<a class="back" href="/">← Voltar</a>
+<a class="brand" href="/" aria-label="SiteFlix início"><span>Site</span>Flix</a>
+<span class="title" id="title">Player</span>
+</header>
+<main class="player-main">
+<div id="video" class="video"><div class="msg">Carregando player...</div></div>
+<div id="controls" class="controls"></div>
+<div id="episodes" class="episodes"></div>
+<div id="info" class="info"></div>
+</main>
+<script>
+const API="/api";
+const params=new URLSearchParams(location.search);
+const type=(params.get("type")||"filme").toLowerCase();
+const id=params.get("id")||"";
+let season=Math.max(1,Number(params.get("season")||1));
+let episode=Math.max(1,Number(params.get("episode")||1));
+const $=s=>document.querySelector(s);
+
+function officialPlayerUrl(){
+  if(!id)return "";
+  if(type==="filme"||type==="movie")return "https://superflixapi.monster/filme/"+encodeURIComponent(id);
+  if(type==="serie"||type==="anime"||type==="dorama"||type==="tv")
+    return "https://superflixapi.monster/serie/"+encodeURIComponent(id)+"/"+season+"/"+episode;
+  return "";
+}
+
+function render(){
+  const url=officialPlayerUrl();
+  if(!url){
+    $("#video").innerHTML='<div class="msg">Não foi possível identificar este conteúdo.</div>';
+    return;
+  }
+  const frame=document.createElement("iframe");
+  frame.src=url;
+  frame.allow="autoplay *; encrypted-media *; picture-in-picture *; fullscreen *; clipboard-write *; accelerometer *; gyroscope *; web-share *";
+  frame.allowFullscreen=true;
+  frame.title="Player SiteFlix";
+  $("#video").replaceChildren(frame);
+}
+
+async function loadInfo(){
+  if(!id){
+    $("#video").innerHTML='<div class="msg">Conteúdo não informado.</div>';
+    return;
+  }
+  try{
+    const r=await fetch(API+"/meta?type="+encodeURIComponent(type)+"&id="+encodeURIComponent(id),{cache:"no-store",headers:{Accept:"application/json"}});
+    if(!r.ok)throw new Error("HTTP "+r.status);
+    const d=await r.json();
+    $("#title").textContent=d.title||"Player";
+    $("#info").textContent=d.overview||d.synopsis||d.description||"";
+    renderSeasons(d.seasons);
+  }catch{
+    $("#title").textContent="Player";
+    render();
+  }
+}
+
+function renderSeasons(seasons){
+  const controls=$("#controls"),episodes=$("#episodes");
+  controls.innerHTML="";
+  episodes.innerHTML="";
+  if(!Array.isArray(seasons)||!seasons.length){
+    render();
+    return;
+  }
+  const select=document.createElement("select");
+  for(const item of seasons){
+    const n=Number(item?.season_number??item?.number);
+    if(!Number.isInteger(n)||n<1)continue;
+    const option=document.createElement("option");
+    option.value=String(n);
+    option.textContent="Temporada "+n;
+    select.append(option);
+  }
+  if(!select.options.length){render();return}
+  if(!Array.from(select.options).some(o=>o.value===String(season)))season=Number(select.options[0].value);
+  select.value=String(season);
+  select.onchange=()=>{
+    season=Number(select.value);
+    episode=1;
+    renderEpisodes(seasons);
+    render();
+  };
+  controls.append(select);
+  renderEpisodes(seasons);
+  render();
+}
+
+function renderEpisodes(seasons){
+  const box=$("#episodes");
+  box.innerHTML="";
+  const chosen=seasons.find(x=>Number(x?.season_number??x?.number)===season);
+  const count=Number(chosen?.episode_count||0);
+  if(!Number.isInteger(count)||count<1)return;
+  for(let i=1;i<=count;i++){
+    const button=document.createElement("button");
+    button.type="button";
+    button.textContent="Episódio "+i;
+    button.className=i===episode?"active":"";
+    button.onclick=()=>{
+      episode=i;
+      renderEpisodes(seasons);
+      render();
+    };
+    box.append(button);
+  }
+}
+
+loadInfo();
+</script>
+</body>
+</html>
