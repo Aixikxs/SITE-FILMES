@@ -1,4 +1,5 @@
 const API="/api";
+const DIRECT="https://superflixapi.monster";
 const $=s=>document.querySelector(s);
 const esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
@@ -12,7 +13,22 @@ async function api(path){
   try{return JSON.parse(text)}catch{throw Error("JSON inválido")}
 }
 function items(d){return Array.isArray(d)?d:(Array.isArray(d?.items)?d.items:Array.isArray(d?.results)?d.results:Array.isArray(d?.data)?d.data:[])}
-async function list(category,extra=""){return items(await api("/lista?category="+encodeURIComponent(category)+"&type=tmdb&format=json"+extra))}
+async function jsonUrl(url){
+  const r=await fetch(url,{headers:{Accept:"application/json,text/plain,*/*"},cache:"no-store"});
+  const type=r.headers.get("content-type")||"";
+  const text=await r.text();
+  if(!r.ok)throw Error("HTTP "+r.status);
+  if(!type.includes("json"))throw Error("Resposta não-JSON");
+  try{return JSON.parse(text)}catch{throw Error("JSON inválido")}
+}
+async function list(category,extra=""){
+  const q="/lista?category="+encodeURIComponent(category)+"&type=tmdb&format=json"+extra;
+  try{return items(await api(q))}
+  catch(primary){
+    try{return items(await jsonUrl(DIRECT+q))}
+    catch(fallback){throw Error(primary.message+"; direto: "+fallback.message)}
+  }
+}
 function norm(x,type){
   if(typeof x==="string"||typeof x==="number")return{id:String(x),type,title:"",poster:"",year:""};
   x=x||{};
@@ -66,7 +82,13 @@ async function channels(){
   s.innerHTML='<div class="section-head"><h2>📡 Canais</h2></div><div class="grid"><span class="loading">Carregando...</span></div>';
   $("#content").append(s);
   try{
-    const a=items(await api("/lista?category=canais&format=json")),r=s.querySelector(".grid");
+    let a;
+    try{a=items(await api("/lista?category=canais&format=json"))}
+    catch(primary){
+      try{a=items(await jsonUrl(DIRECT+"/lista?category=canais&format=json"))}
+      catch(fallback){throw Error(primary.message+"; direto: "+fallback.message)}
+    }
+    const r=s.querySelector(".grid");
     r.innerHTML="";
     a.slice(0,60).forEach(x=>{
       const n=norm(x,"canal"),id=n.id||x.slug||x.name||x.channel_name||"",src=channelUrl(x);
