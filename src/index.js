@@ -89,6 +89,12 @@ export default {
       }
     }
     if(url.pathname.startsWith("/api/")) return proxy(request,url);
-    const response = await env.ASSETS.fetch(request);\n    if (url.pathname === "/" || url.pathname === "/index.html" || url.pathname === "/app.js") {\n      const headers = new Headers(response.headers);\n      headers.set("Cache-Control", "no-store, no-cache, must-revalidate");\n      return new Response(response.body, { status: response.status, statusText: response.statusText, headers });\n    }\n    return response;
+    const response = await env.ASSETS.fetch(request);
+    if (url.pathname === "/" || url.pathname === "/index.html" || url.pathname === "/app.js") {
+      const headers = new Headers(response.headers);
+      headers.set("Cache-Control", "no-store, no-cache, must-revalidate");
+      return new Response(response.body, { status: response.status, statusText: response.statusText, headers });
+    }
+    return response;
   }
 };
