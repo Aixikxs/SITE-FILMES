@@ -1,5 +1,5 @@
 <!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Player — SiteFlix</title><style>*{box-sizing:border-box}body{margin:0;background:#05070c;color:#fff;font-family:system-ui,-apple-system,sans-serif}.top{height:58px;display:flex;align-items:center;padding:0 16px;border-bottom:1px solid #202638;background:#0b0f18}.back{color:#fff;text-decoration:none;margin-right:18px}.title{font-weight:700}.wrap{max-width:1200px;margin:auto;padding:16px}.video{width:100%;aspect-ratio:16/9;background:#000;border-radius:12px;overflow:hidden}.video iframe{width:100%;height:100%;border:0}.msg{padding:30px;text-align:center;color:#aab3c5}.info{color:#aab3c5;margin-top:14px}.controls{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}.controls button{background:#171d2b;color:#fff;border:1px solid #30394e;border-radius:8px;padding:9px 12px}.controls button:hover{background:#242d42}@media(max-width:600px){.wrap{padding:10px}.video{border-radius:8px}}</style></head><body><header class="top"><a class="back" href="/">← Voltar</a><span class="title" id="title">Player</span></header><main class="wrap"><div id="video" class="video"><div class="msg">Carregando player...</div></div><div id="info" class="info"></div><div id="controls" class="controls"></div></main><script>
-const API="/api";
+const API="/api";\nconst PLAYER="https://superflixapi.monster";
 const p=new URLSearchParams(location.search);
 const type=p.get("type")||"filme";
 const id=p.get("id");
@@ -9,7 +9,7 @@ const episode=p.get("episode")||"1";
 const $=s=>document.querySelector(s);
 function safeUrl(value){try{const u=new URL(value);return u.protocol==="https:"?u.href:""}catch{return""}}
 function embed(url){const u=safeUrl(url);if(!u){$("#video").innerHTML='<div class="msg">Player indisponível para este item.</div>';return}$("#video").innerHTML='<iframe src="'+u+'" allow="autoplay *; encrypted-media *; picture-in-picture *; fullscreen *; clipboard-write *; accelerometer *; gyroscope *; web-share *" allowfullscreen webkitallowfullscreen mozallowfullscreen></iframe>'}
-function contentUrl(){if(!id)return"";if(type==="filme")return API+"/filme/"+encodeURIComponent(id);if(type==="serie"||type==="anime"||type==="dorama")return API+"/serie/"+encodeURIComponent(id)+"/"+encodeURIComponent(season)+"/"+encodeURIComponent(episode);return""}
+function contentUrl(){if(!id)return"";if(type==="filme")return PLAYER+"/filme/"+encodeURIComponent(id);if(type==="serie"||type==="anime"||type==="dorama")return PLAYER+"/serie/"+encodeURIComponent(id)+"/"+encodeURIComponent(season)+"/"+encodeURIComponent(episode);return""}
 function render(){const url=src||contentUrl();embed(url);$("#info").textContent=type==="filme"?"Filme":type==="canal"?"Canal ao vivo":("Temporada "+season+" • Episódio "+episode)}
 if(!id&&!src){$("#video").innerHTML='<div class="msg">Conteúdo não informado.</div>'}else render();
 </script></body></html>
