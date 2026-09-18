@@ -1,0 +1,10 @@
+{
+  "rewrites": [
+    { "source": "/filmes", "destination": "/index.html" },
+    { "source": "/series", "destination": "/index.html" },
+    { "source": "/animes", "destination": "/index.html" },
+    { "source": "/doramas", "destination": "/index.html" },
+    { "source": "/canais", "destination": "/index.html" },
+    { "source": "/buscar", "destination": "/index.html" }
+  ]
+}
