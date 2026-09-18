@@ -1,4 +1,4 @@
-const ORIGIN = "https://superflixapi.baby";
+const ORIGIN = "https://superflixapi.baby";\nconst VIDSRC_ORIGIN = "https://vidsrc.sh";
 
 function cors(res) {
   res.setHeader("Access-Control-Allow-Origin", "*");
@@ -49,7 +49,7 @@ export default async function handler(req, res) {
       : [];
   const route = "/" + parts.map(String).join("/");
 
-  if (route === "/health") {
+  if (route.startsWith("/vidsrc/")) {\n    try {\n      const r = await upstream(route.slice(7) + (req.url.includes("?") ? req.url.slice(req.url.indexOf("?")) : ""), req, VIDSRC_ORIGIN);\n      const contentType = r.headers.get("content-type");\n      if (contentType) res.setHeader("Content-Type", contentType);\n      res.setHeader("Cache-Control", "public, s-maxage=300, stale-while-revalidate=60");\n      res.setHeader("X-SiteFlix-Provider", "vidsrc");\n      const body = Buffer.from(await r.arrayBuffer());\n      res.status(r.status).send(body);\n    } catch (e) {\n      res.status(502).json({ error: "vidsrc_fetch_failed", message: String(e?.message || e) });\n    }\n    return;\n  }\n\n  if (route === "/health") {
     const tests = [
       ["filme", "/lista?category=filme&type=tmdb&format=json"],
       ["serie", "/lista?category=serie&type=tmdb&format=json"],
