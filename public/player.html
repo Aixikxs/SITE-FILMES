@@ -1,138 +1,15 @@
-<!doctype html>
-<html lang="pt-BR">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#080911">
-<title>Player — SiteFlix</title>
-<link rel="stylesheet" href="/styles.css">
-<style>
-.player-page{min-height:100vh;background:#05070c;color:#fff}
-.player-top{height:68px;display:flex;align-items:center;gap:18px;padding:0 clamp(16px,4vw,48px);border-bottom:1px solid rgba(255,255,255,.08);background:rgba(8,9,17,.92)}
-.back{color:#fff;text-decoration:none}
-.player-main{max-width:1200px;margin:auto;padding:22px clamp(16px,4vw,48px)}
-.video{width:100%;aspect-ratio:16/9;background:#000;border:1px solid rgba(255,255,255,.08);border-radius:14px;overflow:hidden;display:grid;place-items:center}
-.video iframe{width:100%;height:100%;border:0}
-.msg{padding:30px;text-align:center;color:#aab3c5}
-.info{color:#aab3c5;line-height:1.6;margin-top:14px}
-.controls,.episodes{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
-.controls select,.episodes button{background:#171d2b;color:#fff;border:1px solid #30394e;border-radius:8px;padding:9px 12px}
-.episodes button.active{background:#7c5cff;border-color:#7c5cff}
-</style>
-</head>
-<body class="player-page">
-<header class="player-top">
-<a class="back" href="/">← Voltar</a>
-<a class="brand" href="/" aria-label="SiteFlix início"><span>Site</span>Flix</a>
-<span class="title" id="title">Player</span>
-</header>
-<main class="player-main">
-<div id="video" class="video"><div class="msg">Carregando player...</div></div>
-<div id="controls" class="controls"></div>
-<div id="episodes" class="episodes"></div>
-<div id="info" class="info"></div>
-</main>
-<script>
-const API="/api";
-const params=new URLSearchParams(location.search);
-const type=(params.get("type")||"filme").toLowerCase();
-const id=params.get("id")||"";
-let season=Math.max(1,Number(params.get("season")||1));
-let episode=Math.max(1,Number(params.get("episode")||1));
+<!doctype html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Player — SiteFlix</title><style>*{box-sizing:border-box}body{margin:0;background:#05070c;color:#fff;font-family:system-ui,-apple-system,sans-serif}.top{height:58px;display:flex;align-items:center;padding:0 16px;border-bottom:1px solid #202638;background:#0b0f18}.back{color:#fff;text-decoration:none;margin-right:18px}.title{font-weight:700}.wrap{max-width:1200px;margin:auto;padding:16px}.video{width:100%;aspect-ratio:16/9;background:#000;border-radius:12px;overflow:hidden}.video iframe{width:100%;height:100%;border:0}.msg{padding:30px;text-align:center;color:#aab3c5}.info{color:#aab3c5;margin-top:14px}.controls{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}.controls button{background:#171d2b;color:#fff;border:1px solid #30394e;border-radius:8px;padding:9px 12px}.controls button:hover{background:#242d42}@media(max-width:600px){.wrap{padding:10px}.video{border-radius:8px}}</style></head><body><header class="top"><a class="back" href="/">← Voltar</a><span class="title" id="title">Player</span></header><main class="wrap"><div id="video" class="video"><div class="msg">Carregando player...</div></div><div id="info" class="info"></div><div id="controls" class="controls"></div></main><script>
+const API="https://superflixapi.monster";
+const p=new URLSearchParams(location.search);
+const type=p.get("type")||"filme";
+const id=p.get("id");
+const src=p.get("src");
+const season=p.get("season")||"1";
+const episode=p.get("episode")||"1";
 const $=s=>document.querySelector(s);
-
-function officialPlayerUrl(){
-  if(!id)return "";
-  if(type==="filme"||type==="movie")return "https://vidsrc.sh/embed/movie/"+encodeURIComponent(id);
-  if(type==="serie"||type==="anime"||type==="dorama"||type==="tv")
-    return "https://vidsrc.sh/embed/tv/"+encodeURIComponent(id)+"/"+season+"/"+episode;
-  return "";
-}
-
-function render(){
-  const url=officialPlayerUrl();
-  if(!url){
-    $("#video").innerHTML='<div class="msg">Não foi possível identificar este conteúdo.</div>';
-    return;
-  }
-  const frame=document.createElement("iframe");
-  frame.src=url;
-  frame.allow="autoplay *; encrypted-media *; picture-in-picture *; fullscreen *; clipboard-write *; accelerometer *; gyroscope *; web-share *";
-  frame.allowFullscreen=true;
-  frame.title="Player SiteFlix";
-  $("#video").replaceChildren(frame);
-}
-
-async function loadInfo(){
-  if(!id){
-    $("#video").innerHTML='<div class="msg">Conteúdo não informado.</div>';
-    return;
-  }
-  try{
-    const r=await fetch(API+"/meta?type="+encodeURIComponent(type)+"&id="+encodeURIComponent(id),{cache:"no-store",headers:{Accept:"application/json"}});
-    if(!r.ok)throw new Error("HTTP "+r.status);
-    const d=await r.json();
-    $("#title").textContent=d.title||"Player";
-    $("#info").textContent=d.overview||d.synopsis||d.description||"";
-    renderSeasons(d.seasons);
-  }catch{
-    $("#title").textContent="Player";
-    render();
-  }
-}
-
-function renderSeasons(seasons){
-  const controls=$("#controls"),episodes=$("#episodes");
-  controls.innerHTML="";
-  episodes.innerHTML="";
-  if(!Array.isArray(seasons)||!seasons.length){
-    render();
-    return;
-  }
-  const select=document.createElement("select");
-  for(const item of seasons){
-    const n=Number(item?.season_number??item?.number);
-    if(!Number.isInteger(n)||n<1)continue;
-    const option=document.createElement("option");
-    option.value=String(n);
-    option.textContent="Temporada "+n;
-    select.append(option);
-  }
-  if(!select.options.length){render();return}
-  if(!Array.from(select.options).some(o=>o.value===String(season)))season=Number(select.options[0].value);
-  select.value=String(season);
-  select.onchange=()=>{
-    season=Number(select.value);
-    episode=1;
-    renderEpisodes(seasons);
-    render();
-  };
-  controls.append(select);
-  renderEpisodes(seasons);
-  render();
-}
-
-function renderEpisodes(seasons){
-  const box=$("#episodes");
-  box.innerHTML="";
-  const chosen=seasons.find(x=>Number(x?.season_number??x?.number)===season);
-  const count=Number(chosen?.episode_count||0);
-  if(!Number.isInteger(count)||count<1)return;
-  for(let i=1;i<=count;i++){
-    const button=document.createElement("button");
-    button.type="button";
-    button.textContent="Episódio "+i;
-    button.className=i===episode?"active":"";
-    button.onclick=()=>{
-      episode=i;
-      renderEpisodes(seasons);
-      render();
-    };
-    box.append(button);
-  }
-}
-
-loadInfo();
-</script>
-</body>
-</html>
+function safeUrl(value){try{const u=new URL(value);return u.protocol==="https:"?u.href:""}catch{return""}}
+function embed(url){const u=safeUrl(url);if(!u){$("#video").innerHTML='<div class="msg">Player indisponível para este item.</div>';return}$("#video").innerHTML='<iframe src="'+u+'" allow="autoplay *; encrypted-media *; picture-in-picture *; fullscreen *; clipboard-write *; accelerometer *; gyroscope *; web-share *" allowfullscreen webkitallowfullscreen mozallowfullscreen></iframe>'}
+function contentUrl(){if(!id)return"";if(type==="filme")return API+"/filme/"+encodeURIComponent(id);if(type==="serie"||type==="anime"||type==="dorama")return API+"/serie/"+encodeURIComponent(id)+"/"+encodeURIComponent(season)+"/"+encodeURIComponent(episode);return""}
+function render(){const url=src||contentUrl();embed(url);$("#info").textContent=type==="filme"?"Filme":type==="canal"?"Canal ao vivo":("Temporada "+season+" • Episódio "+episode)}
+if(!id&&!src){$("#video").innerHTML='<div class="msg">Conteúdo não informado.</div>'}else render();
+</script></body></html>
