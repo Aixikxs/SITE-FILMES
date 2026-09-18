@@ -3,24 +3,48 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-  <meta name="theme-color" content="#080911">
-  <meta name="description" content="SiteFlix: seu catálogo de filmes, séries, animes, doramas e canais.">
-  <title>SiteFlix — streaming</title>
-  <link rel="stylesheet" href="/styles.css">
+  <meta name="theme-color" content="#090909">
+  <meta name="description" content="SiteFlix — filmes, séries, animes, doramas e canais.">
+  <title>SiteFlix</title>
+  <link rel="stylesheet" href="/styles.css?v=20260918">
 </head>
 <body>
   <header class="topbar">
-    <a class="brand" href="/" aria-label="SiteFlix início"><span>Site</span>Flix</a>
-    <nav class="main-nav" aria-label="Navegação principal">
-      <button data-category="home">Início</button><button data-category="filme">Filmes</button><button data-category="serie">Séries</button><button data-category="anime">Animes</button><button data-category="dorama">Doramas</button><button data-category="canais">Canais</button><a class="nav-player" href="/player.html">Player</a>
-    </nav>
-    <form class="search-form" id="searchForm"><label class="sr-only" for="search">Buscar no catálogo</label><input id="search" autocomplete="off" placeholder="Buscar títulos..."><button aria-label="Pesquisar" type="submit">⌕</button></form>
+    <div class="topbar-inner">
+      <a class="brand" href="/" aria-label="SiteFlix"><span>Site</span>Flix</a>
+      <nav class="main-nav">
+        <button data-category="home" class="active">Início</button>
+        <button data-category="filme">Filmes</button>
+        <button data-category="serie">Séries</button>
+        <button data-category="anime">Animes</button>
+        <button data-category="dorama">Doramas</button>
+        <button data-category="canais">Canais</button>
+      </nav>
+      <form class="search-form" id="searchForm">
+        <label class="sr-only" for="search">Pesquisar</label>
+        <input id="search" autocomplete="off" placeholder="Pesquisar...">
+        <button type="submit" aria-label="Pesquisar">⌕</button>
+      </form>
+    </div>
   </header>
+
   <main>
-    <section class="hero" id="hero"><div class="hero-copy"><p class="eyebrow">SEU CATÁLOGO, DO SEU JEITO</p><h1>Grandes histórias,<br><em>uma só tela.</em></h1><p class="hero-subtitle">Explore filmes, séries, animes, doramas e canais em um só lugar.</p><div class="hero-actions"><button class="button button-primary" data-category="filme">Explorar filmes</button><button class="button button-ghost" data-category="serie">Ver séries</button></div></div><div class="hero-art" aria-hidden="true"><div class="orb orb-one"></div><div class="orb orb-two"></div><div class="hero-grid"></div></div></section>
+    <section class="hero">
+      <div class="hero-copy">
+        <span class="hero-kicker">SITEFLIX</span>
+        <h1>Filmes, séries e muito mais.</h1>
+        <p>Encontre o que você quer assistir e explore o catálogo.</p>
+        <div class="hero-actions">
+          <button class="hero-button" data-category="filme">Explorar filmes</button>
+          <button class="hero-button secondary" data-category="serie">Explorar séries</button>
+        </div>
+      </div>
+      <div class="hero-glow"></div>
+    </section>
     <div id="content" aria-live="polite"></div>
   </main>
-  <footer><span class="brand small"><span>Site</span>Flix</span><span>Catálogo carregado pela API do projeto</span></footer>
+
+  <footer><span>SiteFlix</span><span>Catálogo do projeto</span></footer>
   <script src="/app.js?v=20260918"></script>
 </body>
 </html>
