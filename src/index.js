@@ -25,30 +25,31 @@ function cors(headers) {
   return headers;
 }
 
-async function proxy(request, env, url) {
+async function proxy(request, url) {
   const target = new URL(ORIGIN + url.pathname.slice(4));
   target.search = url.search;
-
   const isList = target.pathname === "/lista";
-  const cacheKey = new Request(target.toString(), { method: "GET" });
 
-  if (isList) {
-    const cached = await caches.default.match(cacheKey);
-    if (cached) {
-      const headers = cors(new Headers(cached.headers));
-      headers.set("X-SiteFlix-Cache", "HIT");
-      return new Response(cached.body, { status: cached.status, headers });
-    }
-  }
-
-  let upstream;
   try {
-    upstream = await fetch(target.toString(), {
+    const upstream = await fetch(target.toString(), {
       method: request.method === "HEAD" ? "HEAD" : "GET",
       headers: {
         "Accept": request.headers.get("Accept") || "application/json,text/plain,*/*"
       },
-      redirect: "follow"
+      redirect: "follow",
+      ...(isList ? { cf: { cacheTtl: 300, cacheEverything: true } } : {})
+    });
+
+    const headers = cors(new Headers(upstream.headers));
+    headers.delete("content-security-policy");
+    headers.delete("x-frame-options");
+    headers.set("Cache-Control", isList ? "public, max-age=60" : "no-store");
+    headers.set("X-SiteFlix-Upstream-Status", String(upstream.status));
+
+    return new Response(upstream.body, {
+      status: upstream.status,
+      statusText: upstream.statusText,
+      headers
     });
   } catch (e) {
     return new Response(JSON.stringify({
@@ -56,33 +57,12 @@ async function proxy(request, env, url) {
       message: String(e?.message || e)
     }), {
       status: 502,
-      headers: cors(new Headers({ "Content-Type": "application/json; charset=utf-8" }))
+      headers: cors(new Headers({
+        "Content-Type": "application/json; charset=utf-8",
+        "Cache-Control": "no-store"
+      }))
     });
   }
-
-  const headers = cors(new Headers(upstream.headers));
-  headers.delete("content-security-policy");
-  headers.delete("x-frame-options");
-
-  if (isList && upstream.ok && request.method !== "HEAD") {
-    const copyHeaders = new Headers(headers);
-    copyHeaders.set("Cache-Control", "public, max-age=300");
-    const body = await upstream.arrayBuffer();
-    const response = new Response(body, {
-      status: upstream.status,
-      statusText: upstream.statusText,
-      headers: copyHeaders
-    });
-    await caches.default.put(cacheKey, response.clone());
-    return response;
-  }
-
-  headers.set("Cache-Control", "no-store");
-  return new Response(upstream.body, {
-    status: upstream.status,
-    statusText: upstream.statusText,
-    headers
-  });
 }
 
 export default {
@@ -98,12 +78,6 @@ export default {
       const id = url.searchParams.get("id") || "";
       if (!id) return new Response("Missing id", { status: 400 });
 
-      const cacheKey = new Request(
-        new URL("/api/meta?type=" + encodeURIComponent(type) + "&id=" + encodeURIComponent(id), request.url).toString()
-      );
-      const cached = await caches.default.match(cacheKey);
-      if (cached) return cached;
-
       const tmdb = "https://www.themoviedb.org/" + typePath(type) + "/" + encodeURIComponent(id) + "?language=pt-BR";
 
       try {
@@ -111,26 +85,25 @@ export default {
           headers: {
             "User-Agent": "Mozilla/5.0",
             "Accept": "text/html"
-          }
+          },
+          cf: { cacheTtl: 3600, cacheEverything: true }
         });
         const h = await r.text();
-        const response = Response.json(htmlMeta(h), {
+        return Response.json(htmlMeta(h), {
           headers: cors(new Headers({
             "Cache-Control": "public, max-age=3600"
           }))
         });
-        await caches.default.put(cacheKey, response.clone());
-        return response;
       } catch {
         return Response.json({}, {
           status: 502,
-          headers: cors(new Headers())
+          headers: cors(new Headers({ "Cache-Control": "no-store" }))
         });
       }
     }
 
     if (url.pathname.startsWith("/api/")) {
-      return proxy(request, env, url);
+      return proxy(request, url);
     }
 
     return env.ASSETS.fetch(request);
