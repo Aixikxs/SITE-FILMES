@@ -28,7 +28,7 @@ async function upstream(path, req, base = ORIGIN) {
   const url = new URL(base + path);
   const response = await fetch(url, {
     method: req.method === "HEAD" ? "HEAD" : "GET",
-    headers: { Accept: "application/json,text/plain,*/*" },
+    headers: { Accept: req.headers.accept || "application/json,text/plain,*/*", "User-Agent": "Mozilla/5.0" },
     redirect: "follow"
   });
   return response;
