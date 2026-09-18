@@ -1,4 +1,4 @@
-const ORIGIN = "https://superflixapi.monster";
+const ORIGIN = "https://superflixapi.baby";
 
 function cors(res) {
   res.setHeader("Access-Control-Allow-Origin", "*");
