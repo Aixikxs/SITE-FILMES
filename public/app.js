@@ -96,7 +96,7 @@ function channels(){
   const s=makeSection("📡 Canais",true);
   loadChannels(s);
 }
-function home(){
+async function home(){
   $("#content").innerHTML="";
   const defs=[
     ["🎬 Filmes","filme","filme"],["📺 Séries","serie","serie"],
@@ -104,8 +104,11 @@ function home(){
   ];
   const sections=defs.map(d=>makeSection(d[0]));
   const channel=makeSection("📡 Canais",true);
-  defs.forEach((d,i)=>loadSection(sections[i],d[1],d[2],18));
-  loadChannels(channel);
+  for(let i=0;i<defs.length;i++){
+    await loadSection(sections[i],defs[i][1],defs[i][2],18);
+    await sleep(150);
+  }
+  await loadChannels(channel);
 }
 function category(c,t,name){
   $("#content").innerHTML="";
