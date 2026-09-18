@@ -30,10 +30,10 @@ async function list(category,extra=""){
     (category==="pesquisa"?"":"&type=tmdb")+"&format=json"+extra;
   try{return items(await api(q))}
   catch(e){
-    console.warn("[SiteFlix] proxy falhou",q,e);
-    try{return items(await direct(q))}
-    catch(e2){throw new Error((e?.message||"proxy")+" | direto: "+(e2?.message||"direto"))}
+    console.warn("[SiteFlix] API falhou",q,e);
+    throw new Error(e?.message||"Falha na API");
   }
+}
 }
 function norm(x,type){
   if(typeof x==="string"||typeof x==="number")return{id:String(x),type,title:"",poster:"",year:""};
