@@ -1,17 +1,160 @@
-const API="/api";const $=s=>document.querySelector(s);const esc=v=>String(v??"").replace(/[&<>'"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[c]));const sleep=ms=>new Promise(r=>setTimeout(r,ms));let searchTimer;let catalogRun=0;
-async function request(path,timeout=12000){const ctl=new AbortController(),timer=setTimeout(()=>ctl.abort(),timeout);try{const r=await fetch(API+path,{headers:{Accept:"application/json"},cache:"no-store",signal:ctl.signal});if(!r.ok){const e=new Error("HTTP "+r.status);e.status=r.status;throw e}const d=await r.json();return Array.isArray(d)?d:(d?.result||d?.items||d?.results||d?.data||[])}finally{clearTimeout(timer)}}
-function normalize(x,type){if(typeof x!=="object"||x===null)return{id:String(x??""),type,title:"",poster:"",year:""};const title=x.title??x.name??x.show_title??"";const id=x.tmdb_id??x.imdb_id??x.id??"";return{id:String(id),imdb:String(x.imdb_id??""),tmdb:String(x.tmdb_id??""),type,title:String(title).replace(/\s+(19|20)\d{2}$/,""),poster:x.poster??x.poster_path??x.image??"",year:(String(title).match(/\b(19|20)\d{2}\b/)||[])[0]||""}}
-function image(url){if(!url)return"";return/^https?:\/\//i.test(url)?url:url.startsWith("/")?"https://image.tmdb.org/t/p/w500"+url:url}
-function card(item,onClick){const n=normalize(item,item.type||"filme"),el=document.createElement("article");el.className="card";el.tabIndex=0;el.setAttribute("role","button");const poster=image(n.poster);el.innerHTML=(poster?'<img loading="lazy" src="'+esc(poster)+'" alt="Pôster de '+esc(n.title||"conteúdo")+'">':'<div class="no-poster">SF</div>')+'<span class="play-dot" aria-hidden="true">▶</span><div class="card-info"><strong>'+esc(n.title||"Conteúdo "+n.id)+'</strong><span>'+esc(n.year||"")+'</span></div>';el.onclick=onClick||(()=>location.href="/player.html?id="+encodeURIComponent(n.id)+"&type="+encodeURIComponent(n.type));el.onkeydown=e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();el.click()}};return el}
-function skeleton(mode="row"){const wrap=document.createElement("div");wrap.className=mode==="grid"?"grid":"skeleton-row";for(let i=0;i<(mode==="grid"?8:6);i++){const x=document.createElement("div");x.className="skeleton-card";wrap.append(x)}return wrap}
-function section(title,cat,type,mode="row"){const s=document.createElement("section");s.className="section";s.innerHTML='<div class="section-head"><div><h2>'+esc(title)+'</h2><p>Conteúdos disponíveis agora</p></div></div>';s.append(skeleton(mode));$("#content").append(s);return s}
-function showError(target,e){const code=e?.status?String(e.status):e?.name==="AbortError"?"timeout":"";const text=code==="403"||code==="429"?"A fonte do catálogo recusou a requisição. Tente novamente em alguns minutos.":code==="timeout"?"A conexão demorou demais. Tente novamente.":"Não foi possível carregar o catálogo agora.";target.innerHTML='<div class="error friendly-error"><span>⚠</span><span><b>'+esc(text)+'</b></span></div>'}
-async function loadProvider(target,kind,type){try{const path=kind==="movie"?"/vidsrc/movies/latest/page-1.json":"/vidsrc/tvshows/latest/page-1.json";const data=(await request(path)).slice(0,20);target.remove();if(!data.length){const e=document.createElement("div");e.className="empty";e.textContent="Nenhum conteúdo disponível no momento.";target.parentNode?.append(e);return}const grid=document.createElement("div");grid.className=target.classList.contains("grid")?"grid":"row";data.forEach(x=>grid.append(card({...x,type})));target.parentNode?.append(grid)}catch(e){showError(target,e)}}
-function home(){const run=++catalogRun;if($("#hero"))$("#hero").hidden=false;$("#content").innerHTML="";const defs=[["🎬 Filmes","movie","filme"],["📺 Séries","tv","serie"]];const sections=defs.map(d=>section(d[0],d[1],d[2]));const unsupported=[["✨ Animes"],["💫 Doramas"],["📡 Canais"]];unsupported.forEach(([t])=>{const s=section(t,"","",t==="📡 Canais"?"grid":"row");s.querySelector(".skeleton-row,.grid")?.replaceWith(Object.assign(document.createElement("div"),{className:"empty",textContent:"Esta fonte alternativa fornece filmes e séries. Configure uma fonte licenciada para esta categoria."}))});activate("home");(async()=>{for(let i=0;i<defs.length;i++){if(run!==catalogRun)return;await loadProvider(sections[i].querySelector(".skeleton-row"),defs[i][1],defs[i][2]);if(i<defs.length-1)await sleep(180)}})()}
-function category(cat,type,title){catalogRun++;if($("#hero"))$("#hero").hidden=true;$("#content").innerHTML="";if(["anime","dorama","canais"].includes(cat)){const s=section(title,cat,type,"grid");s.querySelector(".grid").replaceWith(Object.assign(document.createElement("div"),{className:"empty",textContent:"A fonte alternativa atual não oferece esta categoria. Use uma fonte licenciada para adicioná-la."}));activate(cat);return}const s=section(title,cat,type,"grid");loadProvider(s.querySelector(".grid"),type==="filme"?"movie":"tv",type);activate(cat)}
-async function search(q){q=q.trim();if(!q){home();return}catalogRun++;if($("#hero"))$("#hero").hidden=true;$("#content").innerHTML='<section class="section"><div class="section-head"><div><h2>Resultados para “'+esc(q)+'”</h2><p>Busca na fonte alternativa</p></div></div><div class="empty">A busca será adicionada após validarmos o novo fornecedor.</div></section>'}
-function activate(active){document.querySelectorAll("[data-category]").forEach(b=>b.classList.toggle("active",b.dataset.category===active))}
-document.querySelectorAll("[data-category]").forEach(b=>b.onclick=()=>{const c=b.dataset.category;if(c==="home"){history.pushState({},"","/");home();return}history.pushState({},"","/"+({filme:"filmes",serie:"series",anime:"animes",dorama:"doramas",canais:"canais"}[c]||""));category(c,c==="filme"?"filme":"serie",b.textContent)});
-$("#searchForm")?.addEventListener("submit",e=>{e.preventDefault();clearTimeout(searchTimer);const q=$("#search").value;search(q);history.pushState({},"","/buscar?q="+encodeURIComponent(q))});
-$("#search")?.addEventListener("input",e=>{clearTimeout(searchTimer);if(e.target.value.trim().length>2)searchTimer=setTimeout(()=>search(e.target.value),450)});
-window.onpopstate=()=>{const p=location.pathname;if(p==="/filmes")category("filme","filme","🎬 Filmes");else if(p==="/series")category("serie","serie","📺 Séries");else if(p==="/animes")category("anime","serie","✨ Animes");else if(p==="/doramas")category("dorama","serie","💫 Doramas");else if(p==="/canais")category("canais","canal","📡 Canais");else if(p==="/buscar")search(new URLSearchParams(location.search).get("q")||"");else home()};home();
+const API="https://superflixapi.monster";
+const $=s=>document.querySelector(s);
+const esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const sleep=ms=>new Promise(r=>setTimeout(r,ms));
+
+async function api(path,html=false){
+  const r=await fetch(API+path,{headers:{Accept:html?"text/html":"application/json"}});
+  if(!r.ok)throw Error("API HTTP "+r.status);
+  return html?r.text():r.json();
+}
+
+function normalize(x,type){
+  if(typeof x==="string"||typeof x==="number")return{id:String(x),type,title:String(x),poster:""};
+  return {
+    id:String(x?.id??x?.tmdb_id??x?.imdb_id??x?.slug??""),
+    type,
+    title:x?.title??x?.name??x?.original_title??x?.original_name??x?.label??"",
+    poster:x?.poster??x?.poster_path??x?.image??x?.image_url??x?.logo??"",
+    year:x?.year??String(x?.release_date??x?.first_air_date??"").slice(0,4),
+    href:x?.page_url??x?.url??x?.link??"",
+    play:x?.play_url??x?.player_url??x?.embed_url??x?.stream_url??""
+  };
+}
+
+function imageUrl(u){
+  if(!u)return "";
+  return u.startsWith("http")?u:u.startsWith("/")?API+u:u;
+}
+
+function makeCard(item){
+  const n=normalize(item,item.type);
+  const e=document.createElement("article");
+  e.className="card";
+  e.innerHTML=(imageUrl(n.poster)?'<img loading="lazy" src="'+esc(imageUrl(n.poster))+'" alt="">':'<div class="no-poster">🎬</div>')+
+    '<div class="card-info"><strong>'+esc(n.title||("ID "+n.id))+'</strong><span>'+esc(n.year||n.id)+'</span></div>';
+  e.onclick=()=>{
+    const q=new URLSearchParams({id:n.id,type:n.type});
+    if(n.play)q.set("src",n.play);
+    location.href="player.html?"+q;
+  };
+  return e;
+}
+
+function parseHtmlCatalog(html,type){
+  const doc=new DOMParser().parseFromString(html,"text/html");
+  const out=[];
+  const seen=new Set();
+  const re=type==="filme"?/\/filme\/([^/?#]+)/: /\/serie\/([^/?#]+)/;
+  doc.querySelectorAll("a[href]").forEach(a=>{
+    const href=a.getAttribute("href")||"";
+    const m=href.match(re);
+    if(!m)return;
+    const id=m[1];
+    if(seen.has(id))return;
+    const img=a.querySelector("img");
+    const title=(img?.alt||a.textContent||"").replace(/\s+/g," ").trim();
+    const src=img?.getAttribute("src")||img?.getAttribute("data-src")||"";
+    const text=(a.textContent||"").replace(/\s+/g," ");
+    const year=(text.match(/\b(19|20)\d{2}\b/)||[])[0]||"";
+    seen.add(id);
+    out.push({id,type,title:title||("ID "+id),poster:src,year,href:href.startsWith("http")?href:API+href});
+  });
+  return out;
+}
+
+async function getCatalog(category,type,limit=24){
+  // The documented JSON catalog returns IDs. The HTML mode contains the
+  // rendered title/poster metadata, so use it first and JSON as fallback.
+  try{
+    const html=await api("/lista?category="+encodeURIComponent(category)+"&format=html","html");
+    const parsed=parseHtmlCatalog(html,type);
+    if(parsed.length)return parsed.slice(0,limit);
+  }catch(e){console.warn("HTML catalog failed",category,e)}
+  const data=await api("/lista?category="+encodeURIComponent(category)+"&type=tmdb&format=json");
+  const arr=Array.isArray(data)?data:(data?.items||data?.results||[]);
+  return arr.slice(0,limit).map(x=>normalize(x,type));
+}
+
+async function renderSection(title,category,type,limit=18){
+  const s=document.createElement("section");
+  s.className="section";
+  s.innerHTML='<div class="section-head"><h2>'+esc(title)+'</h2></div><div class="row"><span class="loading">Carregando...</span></div>';
+  $("#content").append(s);
+  try{
+    const items=await getCatalog(category,type,limit);
+    const row=s.querySelector(".row"); row.innerHTML="";
+    if(!items.length){row.innerHTML='<span class="empty">Nenhum item retornado pela API.</span>';return}
+    items.forEach(x=>row.appendChild(makeCard(x)));
+  }catch(e){
+    console.error(e);
+    s.querySelector(".row").innerHTML='<span class="error">Não foi possível carregar esta seção.</span>';
+  }
+}
+
+async function renderChannels(){
+  const s=document.createElement("section");
+  s.className="section";
+  s.innerHTML='<div class="section-head"><h2>📡 Canais</h2></div><div class="grid"><span class="loading">Carregando...</span></div>';
+  $("#content").append(s);
+  try{
+    const data=await api("/lista?category=canais&format=json");
+    const arr=Array.isArray(data)?data:(data?.items||data?.results||[]);
+    const grid=s.querySelector(".grid");grid.innerHTML="";
+    arr.slice(0,60).forEach(raw=>{
+      const n=normalize(raw,"canal");
+      const e=makeCard({...raw,...n,type:"canal",title:n.title||raw?.channel_name||raw?.name||"Canal",poster:n.poster||raw?.logo});
+      grid.appendChild(e);
+    });
+    if(!arr.length)grid.innerHTML='<span class="empty">Nenhum canal retornado.</span>';
+  }catch(e){
+    console.error(e);
+    s.querySelector(".grid").innerHTML='<span class="error">Não foi possível carregar os canais.</span>';
+  }
+}
+
+async function home(){
+  $("#content").innerHTML="";
+  await renderSection("🎬 Filmes","filme","filme",18);
+  await renderSection("📺 Séries","serie","serie",18);
+  await renderSection("✨ Animes","anime","anime",18);
+  await renderSection("💫 Doramas","dorama","dorama",18);
+  await renderChannels();
+}
+
+async function category(cat,type,title){
+  $("#content").innerHTML="";
+  await renderSection(title,cat,type,48);
+}
+
+async function search(q){
+  $("#content").innerHTML='<section class="section"><div class="section-head"><h2>Busca</h2></div><div class="grid" id="results"><span class="loading">Pesquisando...</span></div></section>';
+  try{
+    const data=await api("/lista?category=pesquisa&q="+encodeURIComponent(q)+"&limit=48&format=json");
+    const arr=Array.isArray(data)?data:(data?.items||data?.results||[]);
+    const grid=$("#results");grid.innerHTML="";
+    arr.forEach(raw=>{
+      const t=String(raw?.type??raw?.media_type??"").toLowerCase();
+      const type=t.includes("serie")||t==="tv"||t.includes("anime")||t.includes("dorama")?"serie":"filme";
+      grid.appendChild(makeCard(normalize(raw,type)));
+    });
+    if(!arr.length)grid.innerHTML='<span class="empty">Nenhum resultado encontrado.</span>';
+  }catch(e){
+    console.error(e);
+    $("#results").innerHTML='<span class="error">Erro na busca.</span>';
+  }
+}
+
+function setup(){
+  document.querySelectorAll("[data-category]").forEach(b=>b.onclick=()=>{
+    const c=b.dataset.category;
+    if(c==="home")home();
+    else if(c==="filme")category("filme","filme","🎬 Filmes");
+    else if(c==="serie")category("serie","serie","📺 Séries");
+    else if(c==="anime")category("anime","anime","✨ Animes");
+    else if(c==="dorama")category("dorama","dorama","💫 Doramas");
+    else if(c==="canais"){ $("#content").innerHTML=""; renderChannels(); }
+  });
+  $("#search").onkeydown=e=>{if(e.key==="Enter"&&e.target.value.trim())search(e.target.value.trim())};
+}
+setup();home();
