@@ -43,9 +43,9 @@ const $=s=>document.querySelector(s);
 
 function officialPlayerUrl(){
   if(!id)return "";
-  if(type==="filme"||type==="movie")return "https://superflixapi.monster/filme/"+encodeURIComponent(id);
+  if(type==="filme"||type==="movie")return "https://vidsrc.sh/embed/movie/"+encodeURIComponent(id);
   if(type==="serie"||type==="anime"||type==="dorama"||type==="tv")
-    return "https://superflixapi.monster/serie/"+encodeURIComponent(id)+"/"+season+"/"+episode;
+    return "https://vidsrc.sh/embed/tv/"+encodeURIComponent(id)+"/"+season+"/"+episode;
   return "";
 }
 
