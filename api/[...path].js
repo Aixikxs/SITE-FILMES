@@ -24,8 +24,8 @@ function htmlMeta(html) {
   };
 }
 
-async function upstream(path, req) {
-  const url = new URL(ORIGIN + path);
+async function upstream(path, req, base = ORIGIN) {
+  const url = new URL(base + path);
   const response = await fetch(url, {
     method: req.method === "HEAD" ? "HEAD" : "GET",
     headers: { Accept: "application/json,text/plain,*/*" },
