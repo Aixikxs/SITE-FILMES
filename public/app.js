@@ -1,5 +1,4 @@
 const API="/api";
-const DIRECT="https://superflixapi.monster";
 const $=s=>document.querySelector(s);
 const esc=v=>String(v??"").replace(/[&<>'"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","'":"&#39;",'"':"&quot;"}[c]));
 const sleep=ms=>new Promise(r=>setTimeout(r,ms));
@@ -23,7 +22,6 @@ async function api(path){
   }
   throw last;
 }
-async function direct(path){return requestJson(DIRECT+path,7000)}
 function items(d){return Array.isArray(d)?d:Array.isArray(d?.items)?d.items:Array.isArray(d?.results)?d.results:Array.isArray(d?.data)?d.data:[]}
 
 async function list(category,extra=""){
@@ -94,6 +92,11 @@ async function loadChannels(s){
     if(!a.length)g.innerHTML='<span class="empty">Nenhum canal retornado pela API.</span>';
   }catch(e){g.innerHTML='<span class="error">Não foi possível carregar os canais.<br><small>'+esc(e.message)+'</small></span>';console.error("[SiteFlix] canais",e)}
 }
+function channels(){
+  $("#content").innerHTML="";
+  const s=makeSection("📡 Canais",true);
+  loadChannels(s);
+}
 function home(){
   $("#content").innerHTML="";
   const defs=[
@@ -130,7 +133,7 @@ function setup(){
     else if(c==="serie")category("serie","serie","📺 Séries");
     else if(c==="anime")category("anime","serie","✨ Animes");
     else if(c==="dorama")category("dorama","serie","💫 Doramas");
-    else channels();
+    else if(c==="canais") channels();
   });
   $("#search")?.addEventListener("keydown",e=>{if(e.key==="Enter")search(e.target.value)});
 }
